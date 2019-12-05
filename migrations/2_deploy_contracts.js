@@ -1,6 +1,6 @@
-const SampleContract = artifacts.require("SampleContract");
+const ChargingOrigin = artifacts.require("ChargingOrigin");
 
 module.exports = function (deployer) {
 
-    deployer.deploy(SampleContract);
+    deployer.deploy(ChargingOrigin);
 };
