@@ -1,0 +1,37 @@
+{
+  "name": "charging-origin",
+  "version": "1.0.0",
+  "description": "OLI Charging Origin Dapp",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test --network volta",
+    "migrate": "truffle migrate --reset --network volta"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olisystems/charging-origin.git"
+  },
+  "keywords": [
+    "Ethereum",
+    "Solidity",
+    "Smart Contracts",
+    "Truffle",
+    "Charging",
+    "Vue.js",
+    "Energy"
+  ],
+  "author": "Muhammad Yahya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/olisystems/charging-origin/issues"
+  },
+  "homepage": "https://github.com/olisystems/charging-origin#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "truffle-hdwallet-provider": "^1.0.17",
+    "web3-provider-engine": "^15.0.4"
+  }
+}
