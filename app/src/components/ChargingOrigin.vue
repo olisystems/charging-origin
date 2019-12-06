@@ -1,0 +1,124 @@
+<template>
+  <div class="main">
+    <div class="top-bar">
+      <div class="stats">
+        <div class="stat">
+          <p>THU PV</p>
+          <h4>{{totalTHU}}</h4>
+          <p class="sub-heading">Total Production [kWh]</p>
+        </div>
+        <div class="stat">
+          <p>Examesh WPP</p>
+          <h4>{{totalExamesh}}</h4>
+          <p class="sub-heading">Total Production [kWh]</p>
+        </div>
+        <div class="stat">
+          <p>Total Production</p>
+          <h4>{{totalProduction}}</h4>
+          <p class="sub-heading">[kWh]</p>
+        </div>
+        <div class="stat">
+          <p>Total Consumption</p>
+          <h4>{{totalConsumption}}</h4>
+          <p class="sub-heading">[kWh]</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import web3 from "../assets/js/web3";
+import ContractInstance from "../assets/js/ContractInstance";
+
+export default {
+  name: "ChargingOrigin",
+  data() {
+    return {
+      account: "",
+      contract: "",
+      totalTHU: "",
+      totalExamesh: "",
+      totalProduction: "",
+      totalConsumption: ""
+    };
+  },
+  methods: {
+    getMetamaskAccount() {
+      web3.eth.getAccounts((err, res) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        this.account = res[0];
+      });
+    },
+
+    async getTotalTHUProduction() {
+      const production = await this.contract.methods
+        .totalThuPvProd()
+        .call({ from: this.account });
+      this.totalTHU = production;
+    },
+    async getTotalExameshProduction() {
+      const production = await this.contract.methods
+        .totalExameshWppProd()
+        .call({ from: this.account });
+      this.totalExamesh = production;
+    },
+    async getTotalProduction() {
+      const production = await this.contract.methods
+        .totalProduction()
+        .call({ from: this.account });
+      this.totalProduction = production;
+    },
+    async getTotalConsumption() {
+      const consumption = await this.contract.methods
+        .totalConsumption()
+        .call({ from: this.account });
+      this.totalConsumption = consumption;
+    },
+    callPublicData() {
+      this.getTotalTHUProduction();
+      this.getTotalExameshProduction();
+      this.getTotalProduction();
+      this.getTotalConsumption();
+    }
+  },
+  async created() {
+    this.getMetamaskAccount();
+    this.contract = await ContractInstance();
+    this.callPublicData();
+  }
+};
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+.main {
+  display: flex;
+  flex-direction: column;
+}
+
+.top-bar {
+  background-color: #f1eded;
+}
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 0.5rem 4.5rem;
+}
+
+h4 {
+  font-size: calc(1vw + 1vh + 1vmin);
+  margin-bottom: 0.7rem;
+  margin-top: 0.7rem;
+  color: #394f7c;
+}
+
+.sub-heading {
+  font-size: 0.8rem;
+  font-style: italic;
+}
+</style>
