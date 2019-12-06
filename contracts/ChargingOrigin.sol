@@ -8,8 +8,8 @@ contract ChargingOrigin {
     // data variables
     uint256 public totalConsumption;
     uint256 public totalProduction;
-    uint256 public totalUlmProduction;
-    uint256 public totalXameshProduction;
+    uint256 public totalThuPvProd;
+    uint256 public totalExameshWppProd;
 
     // events
     event Consumption(address consumer, uint256 consumption, uint256 timestamp);
@@ -22,10 +22,10 @@ contract ChargingOrigin {
     }
 
     function sendProduction(uint256 _production, string memory _name) public {
-        if (keccak256(bytes(_name)) == keccak256('ULM PV')) {
-            totalUlmProduction = totalUlmProduction.add(_production);
-        } else if (keccak256(bytes(_name)) == keccak256('Xamesh')) {
-            totalXameshProduction = totalXameshProduction.add(_production);
+        if (keccak256(bytes(_name)) == keccak256('THU PV')) {
+            totalThuPvProd = totalThuPvProd.add(_production);
+        } else if (keccak256(bytes(_name)) == keccak256('Examesh WPP')) {
+            totalExameshWppProd = totalExameshWppProd.add(_production);
         }
 
         totalProduction = totalProduction.add(_production);

@@ -1,19 +1,19 @@
 import web3 from './web3';
-import sampleContractArtifact from "./contracts/SampleContract";
+import chargingOriginArtifact from "./contracts/ChargingOrigin";
 
 const ContractInstance = async () => {
 
     //This method find the network id to retrieve the configuration from truffle-config.js file
     const networkId = await web3.eth.net.getId();
     // Retrieve the Network configuration from truffle-config.js file
-    const deployedNetwork = sampleContractArtifact.networks[networkId];
+    const deployedNetwork = chargingOriginArtifact.networks[networkId];
     // Initializing the contract
-    const SampleContract = new web3.eth.Contract(
-        sampleContractArtifact.abi,
+    const ChargingOrigin = new web3.eth.Contract(
+        chargingOriginArtifact.abi,
         deployedNetwork.address
     );
 
-    return SampleContract;
+    return ChargingOrigin;
 }
 
 export default ContractInstance;
