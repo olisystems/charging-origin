@@ -2,3 +2,5 @@ node_modules
 .mnemonic
 
 .idea
+
+app/src/assets/testingScript
