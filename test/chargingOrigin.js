@@ -27,11 +27,11 @@ contract('ChargingOrigin', function (accounts) {
         let xameshP = 20
         let totalP = ulmP + xameshP
 
-        let event1 = await chargingOrigin.sendProduction(ulmP, 'ULM PV', { from: defaultAccount })
-        let event2 = await chargingOrigin.sendProduction(xameshP, 'Xamesh', { from: defaultAccount })
+        let event1 = await chargingOrigin.sendProduction(ulmP, 'THU PV', { from: defaultAccount })
+        let event2 = await chargingOrigin.sendProduction(xameshP, 'Examesh WPP', { from: defaultAccount })
 
-        let ulmProduction = await chargingOrigin.totalUlmProduction.call()
-        let xameshProduction = await chargingOrigin.totalXameshProduction.call()
+        let ulmProduction = await chargingOrigin.totalThuPvProd.call()
+        let xameshProduction = await chargingOrigin.totalExameshWppProd.call()
         let totalProduction = await chargingOrigin.totalProduction.call()
 
         assert.equal(ulmProduction, ulmP, 'Failed to set ulm production')
