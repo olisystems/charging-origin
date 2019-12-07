@@ -325,10 +325,36 @@ h4 {
   font-size: 0.8rem;
   font-style: italic;
 }
+.live-data {
+  padding: 1rem;
+}
+
+.live-data-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin: 2.5rem 0.1rem;
+}
+.realTime-table {
+  width: 35%;
+  padding: 0.5rem;
+}
+
+.prod-cons {
+  width: 25%;
+
+  padding: 0.5rem;
+  min-height: 350px;
+}
 
 .thu-examesh {
   width: 35%;
   padding: 0.5rem;
   min-height: 350px;
+}
+
+#production-plot,
+#plot {
+  width: 100%;
+  height: 350px;
 }
 </style>
