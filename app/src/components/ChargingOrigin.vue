@@ -165,6 +165,92 @@ export default {
         })
         .on("error", console.error);
   },
+    plotLiveProduction() {
+      if (this.thuPV.length > 10) {
+        this.thuPV = this.thuPV.slice(-10);
+      }
+      if (this.exameshWPP.length > 10) {
+        this.exameshWPP = this.exameshWPP.slice(-10);
+      }
+      // temp arrays to hold time and energy values
+      let thuTime = [];
+      let thuValue = [];
+      let exameshTime = [];
+      let exameshValue = [];
+
+      this.thuPV.forEach(obj => {
+        thuValue.push(obj.energy);
+        thuTime.push(obj.time);
+      });
+      this.exameshWPP.forEach(obj => {
+        exameshValue.push(obj.energy);
+        exameshTime.push(obj.time);
+      });
+
+      let thuData = {
+        type: "scatter",
+        mode: "lines+markers",
+        name: "THU PV",
+        x: thuTime,
+        y: thuValue,
+        line: {
+          //color: "#009933"
+          color: "rgb(55, 128, 191)"
+        }
+      };
+      let exameshData = {
+        type: "scatter",
+        mode: "lines+markers",
+        name: "Examesh WPP",
+        x: exameshTime,
+        y: exameshValue,
+        line: {
+          //color: "#cc6600"
+          color: "rgb(128, 0, 128)"
+        }
+      };
+      let data = [thuData, exameshData];
+
+      let layout = {
+        xaxis: {
+          title: "Time",
+          type: "date",
+          nticks: 5,
+          tickformat: "%H:%M:%S",
+          hoverformat: "%H:%M:%S",
+          linecolor: "lightgray",
+          linewidth: 0.5,
+          titlefont: {
+            color: "black"
+          }
+        },
+        yaxis: {
+          title: "Energy [kWh] per Block",
+          tickformat: ",d",
+          linecolor: "lightgray",
+          linewidth: 0.5,
+          tick0: 0,
+          titlefont: {
+            color: "black"
+          },
+          exponentformat: "e"
+        },
+        legend: {
+          orientation: "h",
+          xanchor: "center",
+          y: 1.2,
+          x: 0.5
+        },
+        margin: {
+          r: 50,
+          l: 90,
+          b: 50,
+          t: 20,
+          pad: 10
+        }
+      };
+      Plotly.newPlot("production-plot", data, layout, { responsive: true });
+    },
     plotTotalProdCons() {
       var trace1 = {
         type: "bar",
