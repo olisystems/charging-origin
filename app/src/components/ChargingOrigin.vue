@@ -30,8 +30,10 @@
         <div class="thu-examesh wrapper">
           <div class="header">
             <h3>THU PV Examesh WPP Energy Production</h3>
-  </div>
-          <div id="production-plot"></div>
+          </div>
+          <div id="production-plot">
+            <h5 class="loader">Loading...</h5>
+          </div>
         </div>
 
         <div class="wrapper realTime-table">
@@ -57,6 +59,7 @@
                   </tr>
                 </transition-group>
               </v-table>
+              <h5 class="loader">Loading...</h5>
             </div>
           </div>
         </div>
@@ -65,7 +68,9 @@
           <div class="header">
             <h3>Total Energy Production & Consumption</h3>
           </div>
-          <div id="plot"></div>
+          <div id="plot">
+            <h5 class="loader">Loading...</h5>
+          </div>
         </div>
       </div>
     </div>
@@ -74,7 +79,7 @@
 
 <script>
 import web3 from "../assets/js/web3";
-//const $ = require("jquery");
+const $ = require("jquery");
 import { timeConverter } from "../assets/js/time-format";
 import Plotly from "plotly.js-dist";
 import ContractInstance from "../assets/js/ContractInstance";
@@ -143,6 +148,7 @@ export default {
           fromBlock: 0
         })
         .on("data", event => {
+          $(".loader").hide();
           if (event.returnValues[1] === "THU PV") {
             this.thuPV.push({
               energy: event.returnValues[2],
@@ -153,7 +159,7 @@ export default {
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
-    }
+          }
 
           // sum production
           this.sumProduction.push({
@@ -168,7 +174,7 @@ export default {
           this.plotTotalProdCons();
         })
         .on("error", console.error);
-  },
+    },
     plotLiveProduction() {
       if (this.thuPV.length > 10) {
         this.thuPV = this.thuPV.slice(-10);
@@ -288,7 +294,6 @@ export default {
     this.getMetamaskAccount();
     this.contract = await ContractInstance();
     this.callPublicData();
-    // this.watchProduction();
     this.watchRealTimeProduction();
   }
 };
