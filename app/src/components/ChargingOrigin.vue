@@ -14,12 +14,12 @@
         </div>
         <div class="stat">
           <p>Total Production</p>
-          <h4>{{totalProduction}}</h4>
+          <h4 class="prod-color">{{totalProduction}}</h4>
           <p class="sub-heading">[kWh]</p>
         </div>
         <div class="stat">
           <p>Total Consumption</p>
-          <h4>{{totalConsumption}}</h4>
+          <h4 class="cons-color">{{totalConsumption}}</h4>
           <p class="sub-heading">[kWh]</p>
         </div>
       </div>
@@ -115,6 +115,13 @@ h4 {
   margin-bottom: 0.7rem;
   margin-top: 0.7rem;
   color: #394f7c;
+}
+
+.prod-color {
+  color: #009933;
+}
+.cons-color {
+  color: #cc6600;
 }
 
 .sub-heading {
