@@ -30,6 +30,34 @@
   </div>
           <div id="production-plot"></div>
         </div>
+
+        <div class="wrapper realTime-table">
+          <div class="header">
+            <h3>Real Time Energy Production</h3>
+          </div>
+          <div class="table">
+            <div class="table-wrapper">
+              <v-table :data="sumProduction">
+                <thead slot="head">
+                  <th>ETH Address</th>
+                  <th>Name</th>
+                  <th>Power</th>
+                  <th>Time</th>
+                </thead>
+
+                <transition-group name="test" tag="tbody" slot="body" slot-scope="{displayData}">
+                  <tr v-for="(row, index) in displayData" :key="index">
+                    <td>{{row.producer}}</td>
+                    <td>{{row.name}}</td>
+                    <td>{{row.power}}</td>
+                    <td>{{row.time}}</td>
+                  </tr>
+                </transition-group>
+              </v-table>
+            </div>
+          </div>
+        </div>
+
 </template>
 
 <script>
