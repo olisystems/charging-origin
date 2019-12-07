@@ -47,6 +47,7 @@ export default {
       totalProduction: "",
       thuPV: [],
       exameshWPP: [],
+      sumProduction: [] //thuPV + exameshWPP production
     };
   },
   methods: {
