@@ -24,7 +24,12 @@
         </div>
       </div>
     </div>
+        <div class="thu-examesh wrapper">
+          <div class="header">
+            <h3>THU PV Examesh WPP Energy Production</h3>
   </div>
+          <div id="production-plot"></div>
+        </div>
 </template>
 
 <script>
@@ -40,7 +45,8 @@ export default {
       totalTHU: "",
       totalExamesh: "",
       totalProduction: "",
-      totalConsumption: ""
+      thuPV: [],
+      exameshWPP: [],
     };
   },
   methods: {
@@ -83,12 +89,32 @@ export default {
       this.getTotalExameshProduction();
       this.getTotalProduction();
       this.getTotalConsumption();
+    },
+
+    watchRealTimeProduction() {
+      this.contract.events
+        .Production({
+          fromBlock: 0
+        })
+        .on("data", event => {
+          if (event.returnValues[1] === "THU PV") {
+            this.thuPV.push({
+              energy: event.returnValues[2],
+              time: timeConverter(event.returnValues[3])
+            });
+          } else if (event.returnValues[1] === "Examesh WPP") {
+            this.exameshWPP.push({
+              energy: event.returnValues[2],
+              time: timeConverter(event.returnValues[3])
+            });
     }
   },
   async created() {
     this.getMetamaskAccount();
     this.contract = await ContractInstance();
     this.callPublicData();
+    // this.watchProduction();
+    this.watchRealTimeProduction();
   }
 };
 </script>
@@ -127,5 +153,11 @@ h4 {
 .sub-heading {
   font-size: 0.8rem;
   font-style: italic;
+}
+
+.thu-examesh {
+  width: 35%;
+  padding: 0.5rem;
+  min-height: 350px;
 }
 </style>
