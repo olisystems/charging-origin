@@ -108,6 +108,20 @@ export default {
               time: timeConverter(event.returnValues[3])
             });
     }
+
+          // sum production
+          this.sumProduction.push({
+            name: event.returnValues.name,
+            producer: event.returnValues.producer,
+            power: event.returnValues.production,
+            time: timeConverter(event.returnValues.timestamp)
+          });
+
+          this.callPublicData();
+          this.plotLiveProduction();
+          this.plotTotalProdCons();
+        })
+        .on("error", console.error);
   },
   async created() {
     this.getMetamaskAccount();
