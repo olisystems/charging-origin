@@ -24,6 +24,9 @@
         </div>
       </div>
     </div>
+
+    <div class="live-data">
+      <div class="live-data-wrapper">
         <div class="thu-examesh wrapper">
           <div class="header">
             <h3>THU PV Examesh WPP Energy Production</h3>
@@ -58,6 +61,15 @@
           </div>
         </div>
 
+        <div class="prod-cons wrapper">
+          <div class="header">
+            <h3>Total Energy Production & Consumption</h3>
+          </div>
+          <div id="plot"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -73,6 +85,7 @@ export default {
       totalTHU: "",
       totalExamesh: "",
       totalProduction: "",
+      totalConsumption: "",
       thuPV: [],
       exameshWPP: [],
       sumProduction: [] //thuPV + exameshWPP production
@@ -151,6 +164,35 @@ export default {
           this.plotTotalProdCons();
         })
         .on("error", console.error);
+  },
+    plotTotalProdCons() {
+      var trace1 = {
+        type: "bar",
+        x: ["Production", "Consumption"],
+        y: [this.totalProduction, this.totalConsumption],
+        width: 0.2,
+        marker: {
+          color: ["#009933", "#cc6600"]
+        }
+      };
+
+      var data = [trace1];
+
+      var layout = {
+        // title: "Current Energy Production & Consumption",
+        // font: { size: 12 }
+
+        margin: {
+          r: 40,
+          l: 50,
+          b: 50,
+          t: 20,
+          pad: 10
+        }
+      };
+
+      Plotly.newPlot("plot", data, layout, { responsive: true });
+    }
   },
   async created() {
     this.getMetamaskAccount();
