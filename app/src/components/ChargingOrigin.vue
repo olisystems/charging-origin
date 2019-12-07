@@ -52,10 +52,10 @@
 
                 <transition-group name="test" tag="tbody" slot="body" slot-scope="{displayData}">
                   <tr v-for="(row, index) in displayData" :key="index">
-                    <td>{{row.producer}}</td>
+                    <td v-tooltip="row.producer">{{row.producer}}</td>
                     <td>{{row.name}}</td>
                     <td>{{row.power}}</td>
-                    <td>{{row.time}}</td>
+                    <td v-tooltip="row.time">{{row.time}}</td>
                   </tr>
                 </transition-group>
               </v-table>
