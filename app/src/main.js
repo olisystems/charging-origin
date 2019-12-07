@@ -7,6 +7,7 @@ Vue.use(SmartTable)
 Vue.use(VTooltip)
 
 import './assets/css/main.css'
+import 'v-tooltip/dist/v-tooltip.css'
 
 Vue.config.productionTip = false;
 
