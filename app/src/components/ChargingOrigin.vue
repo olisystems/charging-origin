@@ -74,6 +74,9 @@
 
 <script>
 import web3 from "../assets/js/web3";
+//const $ = require("jquery");
+import { timeConverter } from "../assets/js/time-format";
+import Plotly from "plotly.js-dist";
 import ContractInstance from "../assets/js/ContractInstance";
 
 export default {
@@ -102,6 +105,7 @@ export default {
       });
     },
 
+    // get public data variables
     async getTotalTHUProduction() {
       const production = await this.contract.methods
         .totalThuPvProd()
