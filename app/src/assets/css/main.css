@@ -1,0 +1,75 @@
+.wrapper {
+    border: 1px solid #dee2e6;
+    background: rgb(255, 255, 255);
+    /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08); */
+    border-radius: 2px;
+}
+
+.header {
+    /* background-color: #cdf1c3; */
+    text-align: left;
+    margin-bottom: 0.5rem;
+    border-bottom: 1.5px solid #e1dfe2;
+}
+
+.table-wrapper {
+    border: #dee2e6 1px solid;
+    margin: 0.5rem;
+    border-radius: 2px;
+}
+
+.table {
+    height: 340px;
+    overflow-y: auto;
+}
+
+th {
+    background: #f2f0f3;
+    border: #d8d3d3 1px solid;
+    border-radius: 2px;
+    font-size: 0.8rem;
+    position: sticky;
+    z-index: 5;
+    top: 0;
+}
+
+.table table {
+    table-layout: fixed;
+    width: 100%;
+    padding: 0.5rem;
+}
+
+tbody {
+    text-align: center;
+    height: 100px;
+}
+
+th {
+    padding: 0.2rem;
+    font-size: 1rem;
+    background: #f2f0f3;
+    border: #d8d3d3 1px solid;
+    border-radius: 2px;
+}
+
+td, th {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+}
+
+td {
+    border-bottom: 1px solid #cccccc;
+}
+
+tbody>tr:last-child>td {
+    border-bottom: none;
+}
+
+/* hide plotly toolbar */
+
+.modebar {
+    display: none !important;
+}

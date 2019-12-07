@@ -4,6 +4,8 @@ import SmartTable from 'vuejs-smart-table'
 
 Vue.use(SmartTable)
 
+import './assets/css/main.css'
+
 Vue.config.productionTip = false;
 
 new Vue({
