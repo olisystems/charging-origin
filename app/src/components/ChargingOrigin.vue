@@ -240,19 +240,19 @@ export default {
         .on("data", event => {
           $(".loader").hide();
           if (event.returnValues[1] === "THU PV") {
-            this.thuPV.push({
+            this.thuPV.unshift({
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
           } else if (event.returnValues[1] === "Examesh WPP") {
-            this.exameshWPP.push({
+            this.exameshWPP.unshift({
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
           }
 
           // sum production
-          this.sumProduction.push({
+          this.sumProduction.unshift({
             name: event.returnValues.name,
             producer: event.returnValues.producer,
             power: event.returnValues.production,
