@@ -52,6 +52,15 @@
             </div>
           </div>
         </div>
+
+        <div class="thu-examesh wrapper">
+          <div class="header">
+            <h3>THU PV Examesh WPP Energy Production</h3>
+      </div>
+          <div id="percentage-plot">
+            <h5 class="loader">Loading...</h5>
+    </div>
+        </div>
       </div>
     </div>
 
@@ -166,6 +175,7 @@ export default {
         .call({ from: this.account });
       this.totalConsumption = consumption;
     },
+
     callPublicData() {
       this.getTotalTHUProduction();
       this.getTotalExameshProduction();
@@ -179,6 +189,7 @@ export default {
           fromBlock: 0
         })
         .on("data", event => {
+          $(".loader").hide();
           this.consumptionEvents.unshift({
             consumer: event.returnValues.consumer,
             power: event.returnValues.consumption,
