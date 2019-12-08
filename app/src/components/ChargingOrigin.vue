@@ -55,11 +55,11 @@
 
         <div class="thu-examesh wrapper">
           <div class="header">
-            <h3>THU PV Examesh WPP Energy Production</h3>
-      </div>
+            <h3>THU PV & Examesh WPP Energy Percentage</h3>
+          </div>
           <div id="percentage-plot">
             <h5 class="loader">Loading...</h5>
-    </div>
+          </div>
         </div>
       </div>
     </div>
@@ -68,7 +68,7 @@
       <div class="live-data-wrapper">
         <div class="thu-examesh wrapper">
           <div class="header">
-            <h3>THU PV Examesh WPP Energy Production</h3>
+            <h3>THU PV & Examesh WPP Energy Production</h3>
           </div>
           <div id="production-plot">
             <h5 class="loader">Loading...</h5>
@@ -265,6 +265,7 @@ export default {
         })
         .on("error", console.error);
     },
+
     plotLiveProduction() {
       if (this.thuPV.length > 10) {
         this.thuPV = this.thuPV.slice(-10);
@@ -310,7 +311,6 @@ export default {
         }
       };
       let data = [thuData, exameshData];
-
       let layout = {
         xaxis: {
           title: "Time",
@@ -336,10 +336,7 @@ export default {
           exponentformat: "e"
         },
         legend: {
-          orientation: "h",
-          xanchor: "center",
-          y: 1.2,
-          x: 0.5
+          orientation: "h"
         },
         margin: {
           r: 50,
@@ -351,6 +348,7 @@ export default {
       };
       Plotly.newPlot("production-plot", data, layout, { responsive: true });
     },
+
     plotTotalProdCons() {
       var trace1 = {
         type: "bar",
@@ -363,7 +361,6 @@ export default {
       };
 
       var data = [trace1];
-
       var layout = {
         // title: "Current Energy Production & Consumption",
         // font: { size: 12 }
@@ -380,12 +377,13 @@ export default {
       Plotly.newPlot("plot", data, layout, { responsive: true });
     }
   },
+
   async created() {
     this.getMetamaskAccount();
     this.contract = await ContractInstance();
     this.callPublicData();
     this.watchRealTimeProduction();
-    this.watchRealTimeConsumption()
+    this.watchRealTimeConsumption();
   }
 };
 </script>
