@@ -53,7 +53,16 @@
           </div>
         </div>
 
-        <div class="thu-examesh wrapper">
+        <div class="prod-cons wrapper">
+          <div class="header">
+            <h3>Total Energy Production & Consumption</h3>
+          </div>
+          <div id="plot">
+            <h5 class="loader">Loading...</h5>
+          </div>
+        </div>
+
+        <div class="pie-chart wrapper">
           <div class="header">
             <h3>THU PV & Examesh WPP Energy Percentage</h3>
           </div>
@@ -66,15 +75,6 @@
 
     <div class="live-data">
       <div class="live-data-wrapper">
-        <div class="thu-examesh wrapper">
-          <div class="header">
-            <h3>THU PV & Examesh WPP Energy Production</h3>
-          </div>
-          <div id="production-plot">
-            <h5 class="loader">Loading...</h5>
-          </div>
-        </div>
-
         <div class="wrapper realTime-table">
           <div class="header">
             <h3>Real Time Energy Production</h3>
@@ -103,11 +103,11 @@
           </div>
         </div>
 
-        <div class="prod-cons wrapper">
+        <div class="thu-examesh wrapper">
           <div class="header">
-            <h3>Total Energy Production & Consumption</h3>
+            <h3>THU PV & Examesh WPP Energy Production</h3>
           </div>
-          <div id="plot">
+          <div id="production-plot">
             <h5 class="loader">Loading...</h5>
           </div>
         </div>
@@ -213,7 +213,7 @@ export default {
 
       var layout = {
         height: 350,
-        width: 500,
+
         legend: {
           orientation: "h",
           xanchor: "center",
@@ -222,14 +222,14 @@ export default {
         },
         margin: {
           r: 20,
-          l: 50,
+          l: 20,
           b: 20,
           t: 20,
           pad: 10
         }
       };
 
-      Plotly.newPlot("percentage-plot", data, layout);
+      Plotly.newPlot("percentage-plot", data, layout, { responsive: true });
     },
 
     watchRealTimeProduction() {
@@ -320,6 +320,7 @@ export default {
           hoverformat: "%H:%M:%S",
           linecolor: "lightgray",
           linewidth: 0.5,
+
           titlefont: {
             color: "black"
           }
@@ -330,13 +331,18 @@ export default {
           linecolor: "lightgray",
           linewidth: 0.5,
           tick0: 0,
+          zeroline: false,
+          showline: false,
           titlefont: {
             color: "black"
           },
           exponentformat: "e"
         },
         legend: {
-          orientation: "h"
+          orientation: "h",
+          xanchor: "center",
+          y: 1.2,
+          x: 0.5
         },
         margin: {
           r: 50,
@@ -432,7 +438,6 @@ h4 {
   background-color: rgba(245, 239, 239, 0.582);
 }
 
-.live-data-wrapper,
 .percentage-wrapper {
   display: flex;
   justify-content: space-around;
@@ -466,7 +471,6 @@ h4 {
 
 .prod-cons {
   width: 25%;
-
   padding: 0.5rem;
   min-height: 350px;
 }
