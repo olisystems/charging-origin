@@ -25,17 +25,56 @@
       </div>
     </div>
 
-    <div class="live-data">
-      <div class="live-data-wrapper">
-        <div class="thu-examesh wrapper">
+    <div class="percentage">
+      <div class="percentage-wrapper">
+        <div class="wrapper consumption-table">
           <div class="header">
-            <h3>THU PV Examesh WPP Energy Production</h3>
+            <h3>Real Time Energy Consumption</h3>
           </div>
-          <div id="production-plot">
+          <div class="table">
+            <div class="table-wrapper">
+              <v-table :data="consumptionEvents">
+                <thead slot="head">
+                  <th>ETH Address</th>
+                  <th>Power</th>
+                  <th>Time</th>
+                </thead>
+
+                <transition-group name="test" tag="tbody" slot="body" slot-scope="{displayData}">
+                  <tr v-for="(row, index) in displayData" :key="index">
+                    <td v-tooltip="row.consumer">{{row.consumer}}</td>
+                    <td>{{row.power}}</td>
+                    <td v-tooltip="row.time">{{row.time}}</td>
+                  </tr>
+                </transition-group>
+              </v-table>
+              <h5 class="loader">Loading...</h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="prod-cons wrapper">
+          <div class="header">
+            <h3>Total Energy Production & Consumption</h3>
+          </div>
+          <div id="plot">
             <h5 class="loader">Loading...</h5>
           </div>
         </div>
 
+        <div class="pie-chart wrapper">
+          <div class="header">
+            <h3>THU PV & Examesh WPP Energy Percentage</h3>
+          </div>
+          <div id="percentage-plot">
+            <h5 class="loader">Loading...</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="live-data">
+      <div class="live-data-wrapper">
         <div class="wrapper realTime-table">
           <div class="header">
             <h3>Real Time Energy Production</h3>
@@ -64,11 +103,11 @@
           </div>
         </div>
 
-        <div class="prod-cons wrapper">
+        <div class="thu-examesh wrapper">
           <div class="header">
-            <h3>Total Energy Production & Consumption</h3>
+            <h3>THU PV & Examesh WPP Energy Production</h3>
           </div>
-          <div id="plot">
+          <div id="production-plot">
             <h5 class="loader">Loading...</h5>
           </div>
         </div>
@@ -94,6 +133,7 @@ export default {
       totalExamesh: "",
       totalProduction: "",
       totalConsumption: "",
+      consumptionEvents: [],
       thuPV: [],
       exameshWPP: [],
       sumProduction: [] //thuPV + exameshWPP production
@@ -135,11 +175,61 @@ export default {
         .call({ from: this.account });
       this.totalConsumption = consumption;
     },
+
     callPublicData() {
       this.getTotalTHUProduction();
       this.getTotalExameshProduction();
       this.getTotalProduction();
       this.getTotalConsumption();
+    },
+
+    watchRealTimeConsumption() {
+      this.contract.events
+        .Consumption({
+          fromBlock: 0
+        })
+        .on("data", event => {
+          $(".loader").hide();
+          this.consumptionEvents.unshift({
+            consumer: event.returnValues.consumer,
+            power: event.returnValues.consumption,
+            time: timeConverter(event.returnValues.timestamp)
+          });
+          this.getTotalTHUProduction();
+          this.getTotalExameshProduction();
+          this.plotPercentage();
+        })
+        .on("error", console.error);
+    },
+
+    plotPercentage() {
+      var data = [
+        {
+          values: [this.totalTHU, this.totalExamesh],
+          labels: ["THU PV", "Examesh WPP"],
+          type: "pie"
+        }
+      ];
+
+      var layout = {
+        height: 350,
+
+        legend: {
+          orientation: "h",
+          xanchor: "center",
+          y: 1.2,
+          x: 0.5
+        },
+        margin: {
+          r: 20,
+          l: 20,
+          b: 20,
+          t: 20,
+          pad: 10
+        }
+      };
+
+      Plotly.newPlot("percentage-plot", data, layout, { responsive: true });
     },
 
     watchRealTimeProduction() {
@@ -150,19 +240,19 @@ export default {
         .on("data", event => {
           $(".loader").hide();
           if (event.returnValues[1] === "THU PV") {
-            this.thuPV.push({
+            this.thuPV.unshift({
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
           } else if (event.returnValues[1] === "Examesh WPP") {
-            this.exameshWPP.push({
+            this.exameshWPP.unshift({
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
           }
 
           // sum production
-          this.sumProduction.push({
+          this.sumProduction.unshift({
             name: event.returnValues.name,
             producer: event.returnValues.producer,
             power: event.returnValues.production,
@@ -175,6 +265,7 @@ export default {
         })
         .on("error", console.error);
     },
+
     plotLiveProduction() {
       if (this.thuPV.length > 10) {
         this.thuPV = this.thuPV.slice(-10);
@@ -220,7 +311,6 @@ export default {
         }
       };
       let data = [thuData, exameshData];
-
       let layout = {
         xaxis: {
           title: "Time",
@@ -230,6 +320,7 @@ export default {
           hoverformat: "%H:%M:%S",
           linecolor: "lightgray",
           linewidth: 0.5,
+
           titlefont: {
             color: "black"
           }
@@ -240,6 +331,7 @@ export default {
           linecolor: "lightgray",
           linewidth: 0.5,
           tick0: 0,
+          zeroline: false,
           titlefont: {
             color: "black"
           },
@@ -261,6 +353,7 @@ export default {
       };
       Plotly.newPlot("production-plot", data, layout, { responsive: true });
     },
+
     plotTotalProdCons() {
       var trace1 = {
         type: "bar",
@@ -273,7 +366,6 @@ export default {
       };
 
       var data = [trace1];
-
       var layout = {
         // title: "Current Energy Production & Consumption",
         // font: { size: 12 }
@@ -290,11 +382,13 @@ export default {
       Plotly.newPlot("plot", data, layout, { responsive: true });
     }
   },
+
   async created() {
     this.getMetamaskAccount();
     this.contract = await ContractInstance();
     this.callPublicData();
     this.watchRealTimeProduction();
+    this.watchRealTimeConsumption();
   }
 };
 </script>
@@ -309,6 +403,7 @@ export default {
 .top-bar {
   background-color: #f1eded;
 }
+
 .stats {
   display: flex;
   flex-wrap: wrap;
@@ -326,6 +421,7 @@ h4 {
 .prod-color {
   color: #009933;
 }
+
 .cons-color {
   color: #cc6600;
 }
@@ -334,29 +430,52 @@ h4 {
   font-size: 0.8rem;
   font-style: italic;
 }
-.live-data {
+
+.live-data,
+.percentage {
   padding: 1rem;
+  background-color: rgba(245, 239, 239, 0.582);
+}
+
+.percentage-wrapper {
+  display: flex;
+  justify-content: space-around;
+  margin: 1.5rem 0.1rem;
 }
 
 .live-data-wrapper {
   display: flex;
-  justify-content: space-between;
-  margin: 2.5rem 0.1rem;
+  justify-content: space-around;
+  margin: 1.5rem 0.1rem;
 }
+
+.live-data {
+  padding-top: 0;
+}
+
+.percentage-wrapper {
+  margin-bottom: 0;
+}
+
+.consumption-table,
+.pie-chart {
+  width: 30%;
+  padding: 0.5rem;
+}
+
 .realTime-table {
-  width: 35%;
+  width: 45%;
   padding: 0.5rem;
 }
 
 .prod-cons {
   width: 25%;
-
   padding: 0.5rem;
   min-height: 350px;
 }
 
 .thu-examesh {
-  width: 35%;
+  width: 45%;
   padding: 0.5rem;
   min-height: 350px;
 }
