@@ -25,6 +25,36 @@
       </div>
     </div>
 
+    <div class="percentage">
+      <div class="percentage-wrapper">
+        <div class="wrapper realTime-table">
+          <div class="header">
+            <h3>Real Time Energy Consumption</h3>
+          </div>
+          <div class="table">
+            <div class="table-wrapper">
+              <v-table :data="consumptionEvents">
+                <thead slot="head">
+                  <th>ETH Address</th>
+                  <th>Power</th>
+                  <th>Time</th>
+                </thead>
+
+                <transition-group name="test" tag="tbody" slot="body" slot-scope="{displayData}">
+                  <tr v-for="(row, index) in displayData" :key="index">
+                    <td v-tooltip="row.consumer">{{row.consumer}}</td>
+                    <td>{{row.power}}</td>
+                    <td v-tooltip="row.time">{{row.time}}</td>
+                  </tr>
+                </transition-group>
+              </v-table>
+              <h5 class="loader">Loading...</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="live-data">
       <div class="live-data-wrapper">
         <div class="thu-examesh wrapper">
