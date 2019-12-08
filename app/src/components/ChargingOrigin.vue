@@ -94,6 +94,7 @@ export default {
       totalExamesh: "",
       totalProduction: "",
       totalConsumption: "",
+      consumptionEvents: [],
       thuPV: [],
       exameshWPP: [],
       sumProduction: [] //thuPV + exameshWPP production
@@ -140,6 +141,21 @@ export default {
       this.getTotalExameshProduction();
       this.getTotalProduction();
       this.getTotalConsumption();
+    },
+
+    watchRealTimeConsumption() {
+      this.contract.events
+        .Consumption({
+          fromBlock: 0
+        })
+        .on("data", event => {
+          this.consumptionEvents.unshift({
+            consumer: event.returnValues.consumer,
+            power: event.returnValues.consumption,
+            time: timeConverter(event.returnValues.timestamp)
+          });
+        })
+        .on("error", console.error);
     },
 
     watchRealTimeProduction() {
