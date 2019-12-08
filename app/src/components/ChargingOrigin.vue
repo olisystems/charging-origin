@@ -27,7 +27,7 @@
 
     <div class="percentage">
       <div class="percentage-wrapper">
-        <div class="wrapper realTime-table">
+        <div class="wrapper consumption-table">
           <div class="header">
             <h3>Real Time Energy Consumption</h3>
           </div>
@@ -221,8 +221,8 @@ export default {
           x: 0.5
         },
         margin: {
-          r: 50,
-          l: 90,
+          r: 20,
+          l: 50,
           b: 20,
           t: 20,
           pad: 10
@@ -429,16 +429,38 @@ h4 {
 .live-data,
 .percentage {
   padding: 1rem;
+  background-color: rgba(245, 239, 239, 0.582);
 }
 
 .live-data-wrapper,
 .percentage-wrapper {
   display: flex;
-  justify-content: space-between;
-  margin: 2.5rem 0.1rem;
+  justify-content: space-around;
+  margin: 1.5rem 0.1rem;
 }
+
+.live-data-wrapper {
+  display: flex;
+  justify-content: space-around;
+  margin: 1.5rem 0.1rem;
+}
+
+.live-data {
+  padding-top: 0;
+}
+
+.percentage-wrapper {
+  margin-bottom: 0;
+}
+
+.consumption-table,
+.pie-chart {
+  width: 30%;
+  padding: 0.5rem;
+}
+
 .realTime-table {
-  width: 35%;
+  width: 45%;
   padding: 0.5rem;
 }
 
@@ -450,7 +472,7 @@ h4 {
 }
 
 .thu-examesh {
-  width: 35%;
+  width: 45%;
   padding: 0.5rem;
   min-height: 350px;
 }
