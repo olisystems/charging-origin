@@ -332,7 +332,6 @@ export default {
           linewidth: 0.5,
           tick0: 0,
           zeroline: false,
-          showline: false,
           titlefont: {
             color: "black"
           },
