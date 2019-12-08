@@ -341,6 +341,7 @@ export default {
     this.contract = await ContractInstance();
     this.callPublicData();
     this.watchRealTimeProduction();
+    this.watchRealTimeConsumption()
   }
 };
 </script>
@@ -355,6 +356,7 @@ export default {
 .top-bar {
   background-color: #f1eded;
 }
+
 .stats {
   display: flex;
   flex-wrap: wrap;
@@ -372,6 +374,7 @@ h4 {
 .prod-color {
   color: #009933;
 }
+
 .cons-color {
   color: #cc6600;
 }
@@ -380,11 +383,14 @@ h4 {
   font-size: 0.8rem;
   font-style: italic;
 }
-.live-data {
+
+.live-data,
+.percentage {
   padding: 1rem;
 }
 
-.live-data-wrapper {
+.live-data-wrapper,
+.percentage-wrapper {
   display: flex;
   justify-content: space-between;
   margin: 2.5rem 0.1rem;
