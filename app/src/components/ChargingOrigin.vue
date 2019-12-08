@@ -195,8 +195,41 @@ export default {
             power: event.returnValues.consumption,
             time: timeConverter(event.returnValues.timestamp)
           });
+          this.getTotalTHUProduction();
+          this.getTotalExameshProduction();
+          this.plotPercentage();
         })
         .on("error", console.error);
+    },
+
+    plotPercentage() {
+      var data = [
+        {
+          values: [this.totalTHU, this.totalExamesh],
+          labels: ["THU PV", "Examesh WPP"],
+          type: "pie"
+        }
+      ];
+
+      var layout = {
+        height: 350,
+        width: 500,
+        legend: {
+          orientation: "h",
+          xanchor: "center",
+          y: 1.2,
+          x: 0.5
+        },
+        margin: {
+          r: 50,
+          l: 90,
+          b: 20,
+          t: 20,
+          pad: 10
+        }
+      };
+
+      Plotly.newPlot("percentage-plot", data, layout);
     },
 
     watchRealTimeProduction() {
