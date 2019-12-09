@@ -186,7 +186,7 @@ export default {
     watchRealTimeConsumption() {
       this.contract.events
         .Consumption({
-          fromBlock: 0
+          fromBlock: "latest"
         })
         .on("data", event => {
           $(".loader").hide();
@@ -235,7 +235,7 @@ export default {
     watchRealTimeProduction() {
       this.contract.events
         .Production({
-          fromBlock: 0
+          fromBlock: "latest"
         })
         .on("data", event => {
           $(".loader").hide();
