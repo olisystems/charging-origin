@@ -40,7 +40,7 @@
                   <th>Time</th>
                 </thead>
 
-                <transition-group name="test" tag="tbody" slot="body" slot-scope="{displayData}">
+                <transition-group name="test2" tag="tbody" slot="body" slot-scope="{displayData}">
                   <tr v-for="(row, index) in displayData" :key="index">
                     <td v-tooltip="row.consumer">{{row.consumer}}</td>
                     <td>{{row.power}}</td>
@@ -184,20 +184,21 @@ export default {
     },
 
     watchRealTimeConsumption() {
+      console.log("first call");
+
       this.contract.events
         .Consumption({
-          fromBlock: "latest"
+          fromBlock: "latest",
+          toBlock:'latest'
         })
         .on("data", event => {
           $(".loader").hide();
+          console.log(event.transactionHash);
           this.consumptionEvents.unshift({
             consumer: event.returnValues.consumer,
             power: event.returnValues.consumption,
             time: timeConverter(event.returnValues.timestamp)
           });
-          this.getTotalTHUProduction();
-          this.getTotalExameshProduction();
-          this.plotPercentage();
         })
         .on("error", console.error);
     },
@@ -240,12 +241,12 @@ export default {
         .on("data", event => {
           $(".loader").hide();
           if (event.returnValues[1] === "THU PV") {
-            this.thuPV.unshift({
+            this.thuPV.push({
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
           } else if (event.returnValues[1] === "Examesh WPP") {
-            this.exameshWPP.unshift({
+            this.exameshWPP.push({
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
@@ -261,7 +262,6 @@ export default {
 
           this.callPublicData();
           this.plotLiveProduction();
-          this.plotTotalProdCons();
         })
         .on("error", console.error);
     },
@@ -493,5 +493,20 @@ h4 {
 #plot {
   width: 100%;
   height: 350px;
+}
+
+.test-enter, .test2-enter /* .list-leave-active below version 2.1.8 */ {
+  opacity: 50;
+  transform: translateY(-5px);
+  background-color: #a2d893;
+}
+.test-move,
+.test2-move {
+  transition: transform 1s;
+}
+
+.test-enter-active,
+.test2-enter-active {
+  transition: all 1s ease-in-out;
 }
 </style>
