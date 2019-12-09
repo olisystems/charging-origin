@@ -382,6 +382,15 @@ export default {
       Plotly.newPlot("plot", data, layout, { responsive: true });
     }
   },
+  watch: {
+    totalConsumption() {
+      this.plotTotalProdCons();
+      this.plotPercentage();
+    },
+    totalProduction() {
+      this.plotTotalProdCons();
+    }
+  },
 
   async created() {
     this.getMetamaskAccount();
