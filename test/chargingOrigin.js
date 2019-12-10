@@ -11,9 +11,10 @@ contract('ChargingOrigin', function (accounts) {
     });
 
     it("can send the consumption data", async () => {
+        await chargingOrigin.registerConsumer('Charging Point 1', 123, 456, { from: defaultAccount })
 
         let consumption = 20;
-        let event = await chargingOrigin.sendConsumption(consumption, { from: defaultAccount })
+        let event = await chargingOrigin.sendConsumption(consumption, 'Test Location', { from: defaultAccount })
         let totalConsumption = await chargingOrigin.totalConsumption.call()
 
         assert.equal(totalConsumption, consumption, 'Failed to set total consumption')
