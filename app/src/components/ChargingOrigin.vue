@@ -55,14 +55,9 @@
           </div>
         </div>
 
-        <div class="prod-cons wrapper">
-          <div class="header">
-            <h3>Total Energy Production & Consumption</h3>
+        <div class="map">
+          <div id="map"></div>
           </div>
-          <div id="plot">
-            <h5 class="loader">Loading...</h5>
-          </div>
-        </div>
 
         <div class="pie-chart wrapper">
           <div class="header">
@@ -139,7 +134,9 @@ export default {
       consumptionEvents: [],
       thuPV: [],
       exameshWPP: [],
-      sumProduction: [] //thuPV + exameshWPP production
+      sumProduction: [], //thuPV + exameshWPP production
+      // spatial distribution starts here
+      map: null,
     };
   },
   methods: {
@@ -184,6 +181,97 @@ export default {
       this.getTotalExameshProduction();
       this.getTotalProduction();
       this.getTotalConsumption();
+    },
+
+
+    initMap() {
+      // home marker icon
+      var homeIcon = L.icon({
+        iconUrl: "home.png",
+        iconSize: [30, 40]
+      });
+
+      // create tile layers
+      const openStreet = L.tileLayer(
+          "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          {
+            attribution:
+              "&copy; " +
+              '<a href="http://openstreetmap.org">OpenStreetMap</a>' +
+              " Contributors",
+            maxZoom: 10
+          }
+        ),
+        OpenStreetMap_BlackAndWhite = L.tileLayer(
+          "http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png",
+          {
+            maxZoom: 18,
+            attribution:
+              '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          }
+        ),
+        OpenStreetMap_DE = L.tileLayer(
+          "https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png",
+          {
+            maxZoom: 18,
+            attribution:
+              '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          }
+        ),
+        OpenTopoMap = L.tileLayer(
+          "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+          {
+            maxZoom: 17,
+            attribution:
+              'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+          }
+        ),
+        Esri_WorldImagery = L.tileLayer(
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          {
+            attribution:
+              "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+          }
+        ),
+        CartoDB_DarkMatter = L.tileLayer(
+          "https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
+          {
+            attribution:
+              '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+            subdomains: "abcd",
+            maxZoom: 19
+          }
+        );
+
+      // create base layer object
+      const baseMaps = {
+        "<span style='color: gray'>Open Street</span>": openStreet,
+        Grayscale: OpenStreetMap_BlackAndWhite,
+        "Open Street DE": OpenStreetMap_DE,
+        "Open Topo": OpenTopoMap,
+        "ESRI Imagery": Esri_WorldImagery,
+        "CartoDB Dark": CartoDB_DarkMatter
+      };
+
+      this.map = L.map("map", {
+        center: [48.8, 9.2],
+        zoom: 9,
+        layers: openStreet
+      });
+      // add layers control
+      L.control.layers(baseMaps).addTo(this.map);
+      // add home marker
+      const homeMarker = L.marker([48.77538056, 9.16277778], {
+        icon: homeIcon
+      }).addTo(this.map);
+      // bind popup to home marker
+      homeMarker.bindPopup("OLI Systems GmbH");
+      homeMarker.on("mouseover", function() {
+        this.openPopup();
+      });
+      homeMarker.on("mouseout", function() {
+        this.closePopup();
+      });
     },
 
     watchRealTimeConsumption() {
@@ -421,6 +509,8 @@ export default {
     this.callPublicData();
     this.watchRealTimeProduction();
     this.watchRealTimeConsumption();
+  mounted() {
+    this.initMap();
   }
 };
 </script>
