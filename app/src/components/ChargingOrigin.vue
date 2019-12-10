@@ -124,6 +124,7 @@ const $ = require("jquery");
 import { timeConverter } from "../assets/js/time-format";
 import Plotly from "plotly.js-dist";
 import ContractInstance from "../assets/js/ContractInstance";
+import L from "leaflet";
 
 export default {
   name: "ChargingOrigin",
