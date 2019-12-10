@@ -93,8 +93,8 @@
                   <tr v-for="(row, index) in displayData" :key="index">
                     <td v-tooltip="row.producer">{{row.producer}}</td>
                     <td>{{row.name}}</td>
-                    <td>{{row.power}}</td>
-                    <td v-tooltip="row.time">{{row.time}}</td>
+                    <td>{{row.power[row.power.length-1]}}</td>
+                    <td v-tooltip="row.time[row.time.length-1]">{{row.time[row.time.length-1]}}</td>
                   </tr>
                 </transition-group>
               </v-table>
@@ -262,13 +262,22 @@ export default {
             });
           }
 
-          // sum production
-          this.sumProduction.unshift({
-            name: event.returnValues.name,
-            producer: event.returnValues.producer,
-            power: event.returnValues.production,
-            time: timeConverter(event.returnValues.timestamp)
-          });
+          const index = this.sumProduction.findIndex(
+            e => e.producer == event.returnValues.producer
+          );
+          if (index === -1) {
+            this.sumProduction.unshift({
+              name: event.returnValues.name,
+              producer: event.returnValues.producer,
+              power: [event.returnValues.production],
+              time: [timeConverter(event.returnValues.timestamp)]
+            });
+          } else {
+            this.sumProduction[index].power.push(event.returnValues.production);
+            this.sumProduction[index].time.push(
+              timeConverter(event.returnValues.timestamp)
+            );
+          }
 
           this.callPublicData();
           this.plotLiveProduction();
