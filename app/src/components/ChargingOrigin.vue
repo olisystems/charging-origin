@@ -43,8 +43,8 @@
                 <transition-group name="test2" tag="tbody" slot="body" slot-scope="{displayData}">
                   <tr v-for="(row, index) in displayData" :key="index">
                     <td v-tooltip="row.consumer">{{row.consumer}}</td>
-                    <td>{{row.power}}</td>
-                    <td v-tooltip="row.time">{{row.time}}</td>
+                    <td>{{row.power[row.power.length-1]}}</td>
+                    <td v-tooltip="row.time[row.time.length-1]">{{row.time[row.time.length-1]}}</td>
                   </tr>
                 </transition-group>
               </v-table>
@@ -184,21 +184,31 @@ export default {
     },
 
     watchRealTimeConsumption() {
-      console.log("first call");
-
       this.contract.events
         .Consumption({
           fromBlock: "latest",
-          toBlock:'latest'
+          toBlock: "latest"
         })
         .on("data", event => {
           $(".loader").hide();
-          console.log(event.transactionHash);
-          this.consumptionEvents.unshift({
-            consumer: event.returnValues.consumer,
-            power: event.returnValues.consumption,
-            time: timeConverter(event.returnValues.timestamp)
-          });
+
+          const index = this.consumptionEvents.findIndex(
+            e => e.consumer == event.returnValues.consumer
+          );
+          if (index === -1) {
+            this.consumptionEvents.push({
+              consumer: event.returnValues.consumer,
+              power: [event.returnValues.consumption],
+              time: [timeConverter(event.returnValues.timestamp)]
+            });
+          } else {
+            this.consumptionEvents[index].power.push(
+              event.returnValues.consumption
+            );
+            this.consumptionEvents[index].time.push(
+              timeConverter(event.returnValues.timestamp)
+            );
+          }
         })
         .on("error", console.error);
     },
