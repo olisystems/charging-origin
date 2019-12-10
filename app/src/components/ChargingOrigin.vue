@@ -37,6 +37,7 @@
                 <thead slot="head">
                   <th>ETH Address</th>
                   <th>Power</th>
+                  <th>Location</th>
                   <th>Time</th>
                 </thead>
 
@@ -44,6 +45,7 @@
                   <tr v-for="(row, index) in displayData" :key="index">
                     <td v-tooltip="row.consumer">{{row.consumer}}</td>
                     <td>{{row.power[row.power.length-1]}}</td>
+                    <td v-tooltip="row.location">{{row.location}}</td>
                     <td v-tooltip="row.time[row.time.length-1]">{{row.time[row.time.length-1]}}</td>
                   </tr>
                 </transition-group>
@@ -199,6 +201,7 @@ export default {
             this.consumptionEvents.push({
               consumer: event.returnValues.consumer,
               power: [event.returnValues.consumption],
+              location: event.returnValues.location,
               time: [timeConverter(event.returnValues.timestamp)]
             });
           } else {
