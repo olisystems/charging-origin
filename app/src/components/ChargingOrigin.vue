@@ -137,6 +137,16 @@ export default {
       sumProduction: [], //thuPV + exameshWPP production
       // spatial distribution starts here
       map: null,
+      consumerAddress: "",
+      consumerLocation: [],
+      consumerLocationObject: {},
+      consumerLocationEntries: [],
+      currentConsumerCordinates: [],
+      consumerPopup: "",
+      currentConsumerPopup: [],
+      currentConsumerMarker: {},
+      currentConsumerAddress: "",
+      consumerEthAddress: []
     };
   },
   methods: {
@@ -183,6 +193,55 @@ export default {
       this.getTotalConsumption();
     },
 
+
+    addConsMarkers() {
+      // define popup options
+      const popupOptions = {
+        maxWidth: "500",
+        className: "currentCons-popup"
+      };
+      // current producer icon
+      const consumerIcon = L.icon({
+        iconUrl: "consumer.png",
+        iconSize: [50, 60]
+      });
+      // get event data
+      this.contract
+        .getPastEvents("ConsumerRegistration", {
+          fromBlock: 0,
+          toBlock: "latest"
+        })
+        .then(results => {
+          results.forEach(result => {
+            const markers = L.marker(
+              [
+                result.returnValues.latitude / 10000,
+                result.returnValues.longitude / 10000
+              ],
+              { icon: consumerIcon }
+            ).addTo(this.map);
+
+            // define popup contents
+            this.consumerPopup =
+              "Eth address: " +
+              result.returnValues.addressCP.slice(0, 7) +
+              "..." +
+              "<br>" +
+              "Location: " +
+              result.returnValues.latitude / 10000 +
+              ", " +
+              result.returnValues.longitude / 10000;
+            // bind popup
+            markers.bindPopup(this.consumerPopup, popupOptions);
+            markers.on("mouseover", function() {
+              this.openPopup();
+            });
+            markers.on("mouseout", function() {
+              this.closePopup();
+            });
+          });
+        });
+    },
 
     initMap() {
       // home marker icon
