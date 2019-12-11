@@ -738,10 +738,8 @@ h4 {
   padding: 0.5rem;
 }
 
-.prod-cons {
-  width: 25%;
-  padding: 0.5rem;
-  min-height: 350px;
+.consumer-address {
+  cursor: pointer;
 }
 
 .thu-examesh {
@@ -769,5 +767,25 @@ h4 {
 .test-enter-active,
 .test2-enter-active {
   transition: all 1s ease-in-out;
+}
+
+.map {
+  width: 35%;
+  height: 435px;
+}
+
+.prod-cons {
+  width: 35%;
+  padding: 0.5rem;
+  min-height: 350px;
+}
+
+#map {
+  position: center;
+  width: 100% !important;
+  height: 100%;
+  margin: auto;
+  border: 1px solid #d2d4d6;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 }
 </style>
