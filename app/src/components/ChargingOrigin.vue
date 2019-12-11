@@ -192,8 +192,97 @@ export default {
       this.getTotalProduction();
       this.getTotalConsumption();
     },
+    // spatial distribution starts from here
+    getCurrentConsMarker() {
+      this.currentConsumerAddress = event.target.innerHTML;
+      let popupOptions = {
+        maxWidth: "500",
+        className: "currentCons-popup" // classname for another popup
+      };
 
+      this.contract
+        .getPastEvents("ConsumerRegistration", {
+          fromBlock: 0,
+          toBlock: "latest"
+        })
+        .then(results => {
+          results.forEach(result => {
+            this.consumerLocation.push(
+              result.returnValues.latitude / 10000 +
+                ", " +
+                result.returnValues.longitude / 10000 +
+                ", " +
+                result.returnValues.name
+            );
 
+            // push addresses
+            this.consumerEthAddress.push(result.returnValues.addressCP);
+
+            // bind key values
+            this.consumerEthAddress.forEach(
+              (key, i) =>
+                (this.consumerLocationObject[key] = this.consumerLocation[i])
+            );
+          });
+
+          // storing entries of single object into list of items
+          for (
+            let i = 0;
+            i < Object.keys(this.consumerLocationObject).length;
+            i++
+          ) {
+            this.consumerLocationEntries.push(
+              Object.entries(this.consumerLocationObject)[i]
+            );
+          }
+
+          for (let i = 0; i < this.consumerLocationEntries.length; i++) {
+            if (
+              this.currentConsumerAddress == this.consumerLocationEntries[i][0]
+            ) {
+              this.currentConsumerCordinates = this.consumerLocationObject[
+                this.currentConsumerAddress
+              ];
+              this.currentConsumerCordinates = this.currentConsumerCordinates.split(
+                ","
+              );
+
+              let currentConsLat = this.currentConsumerCordinates[0].trim();
+              let currentConsLon = this.currentConsumerCordinates[1].trim();
+
+              this.currentConsumerPopup =
+                "Consumer: " +
+                this.currentConsumerCordinates[2] +
+                "<br>" +
+                "Eth address: " +
+                this.currentConsumerAddress.slice(0, 7) +
+                "..." +
+                "<br>" +
+                "Location: " +
+                this.currentConsumerCordinates[0] +
+                ", " +
+                this.currentConsumerCordinates[1];
+
+              let currentConsIcon = L.icon({
+                iconUrl: "consumer.png",
+                iconSize: [30, 40]
+              });
+
+              if (this.currentConsumerMarker != undefined) {
+                this.map.removeLayer(this.currentConsumerMarker);
+              }
+
+              this.currentConsumerMarker = L.marker(
+                [currentConsLat, currentConsLon],
+                { icon: currentConsIcon }
+              ).addTo(this.map);
+              this.currentConsumerMarker
+                .bindPopup(this.currentConsumerPopup, popupOptions)
+                .openPopup();
+            }
+          }
+        });
+    },
     addConsMarkers() {
       // define popup options
       const popupOptions = {
