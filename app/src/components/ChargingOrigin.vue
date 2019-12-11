@@ -286,6 +286,13 @@ export default {
             }
           }
         });
+
+      // removing the background color for ul-selected items
+      document.querySelectorAll(".consumer-address").forEach(list => {
+        list.classList.remove("active-consumer");
+      });
+      // add background to selected account
+      event.target.classList.add("active-consumer");
     },
     addConsMarkers() {
       // define popup options
@@ -717,6 +724,14 @@ h4 {
 
 .consumer-address {
   cursor: pointer;
+}
+
+.consumer-address:hover {
+  background: #d6d2d2;
+}
+
+.active-consumer {
+  background-color: #ecbe78;
 }
 
 .thu-examesh {
