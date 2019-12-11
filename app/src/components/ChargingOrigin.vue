@@ -123,12 +123,14 @@ const $ = require("jquery");
 import { timeConverter } from "../assets/js/time-format";
 import Plotly from "plotly.js-dist";
 import ContractInstance from "../assets/js/ContractInstance";
+import TestInstance from "../assets/js/testInstance";
 import L from "leaflet";
 
 export default {
   name: "ChargingOrigin",
   data() {
     return {
+      testContract: "",
       account: "",
       contract: "",
       totalTHU: "",
@@ -137,6 +139,8 @@ export default {
       totalConsumption: "",
       consumptionEvents: [],
       thuPV: [],
+      uniqueThuPV: [],
+      uniqueExameshWpp: [],
       exameshWPP: [],
       sumProduction: [], //thuPV + exameshWPP production
       // spatial distribution starts here
@@ -522,6 +526,7 @@ export default {
         })
         .on("data", event => {
           $(".loader").hide();
+
           if (event.returnValues[1] === "THU PV") {
             this.thuPV.push({
               energy: event.returnValues[2],
@@ -569,6 +574,8 @@ export default {
     },
 
     plotLiveProduction() {
+      this.thuPV = this.getUnique(this.thuPV, "time");
+      this.exameshWPP = this.getUnique(this.exameshWPP, "time");
       if (this.thuPV.length > 10) {
         this.thuPV = this.thuPV.slice(-10);
       }
@@ -665,10 +672,13 @@ export default {
   async created() {
     this.getMetamaskAccount();
     this.contract = await ContractInstance();
+    this.testContract = await TestInstance();
     this.callPublicData();
     this.watchRealTimeProduction();
     this.watchRealTimeConsumption();
     this.addConsMarkers();
+    this.plotPercentage();
+    this.watchData();
   },
   mounted() {
     this.initMap();
