@@ -43,7 +43,11 @@
 
                 <transition-group name="test2" tag="tbody" slot="body" slot-scope="{displayData}">
                   <tr v-for="(row, index) in displayData" :key="index">
-                    <td v-tooltip="row.consumer">{{row.consumer}}</td>
+                    <td
+                      v-tooltip="row.consumer"
+                      v-on:click="getCurrentConsMarker"
+                      class="consumer-address"
+                    >{{row.consumer}}</td>
                     <td>{{row.power[row.power.length-1]}}</td>
                     <td v-tooltip="row.location">{{row.location}}</td>
                     <td v-tooltip="row.time[row.time.length-1]">{{row.time[row.time.length-1]}}</td>
@@ -57,7 +61,7 @@
 
         <div class="map">
           <div id="map"></div>
-          </div>
+        </div>
 
         <div class="pie-chart wrapper">
           <div class="header">
@@ -312,6 +316,9 @@ export default {
 
             // define popup contents
             this.consumerPopup =
+              "Consumer: " +
+              result.returnValues.name +
+              "<br>" +
               "Eth address: " +
               result.returnValues.addressCP.slice(0, 7) +
               "..." +
@@ -402,7 +409,7 @@ export default {
       };
 
       this.map = L.map("map", {
-        center: [48.8, 9.2],
+        center: [48.7, 9.4],
         zoom: 9,
         layers: openStreet
       });
@@ -611,43 +618,11 @@ export default {
         }
       };
       Plotly.newPlot("production-plot", data, layout, { responsive: true });
-    },
-
-    plotTotalProdCons() {
-      var trace1 = {
-        type: "bar",
-        x: ["Production", "Consumption"],
-        y: [this.totalProduction, this.totalConsumption],
-        width: 0.2,
-        marker: {
-          color: ["#009933", "#cc6600"]
-        }
-      };
-
-      var data = [trace1];
-      var layout = {
-        // title: "Current Energy Production & Consumption",
-        // font: { size: 12 }
-
-        margin: {
-          r: 40,
-          l: 50,
-          b: 50,
-          t: 20,
-          pad: 10
-        }
-      };
-
-      Plotly.newPlot("plot", data, layout, { responsive: true });
     }
   },
   watch: {
     totalConsumption() {
-      this.plotTotalProdCons();
       this.plotPercentage();
-    },
-    totalProduction() {
-      this.plotTotalProdCons();
     }
   },
 
@@ -657,6 +632,8 @@ export default {
     this.callPublicData();
     this.watchRealTimeProduction();
     this.watchRealTimeConsumption();
+    this.addConsMarkers();
+  },
   mounted() {
     this.initMap();
   }
@@ -759,6 +736,7 @@ h4 {
   transform: translateY(-5px);
   background-color: #a2d893;
 }
+
 .test-move,
 .test2-move {
   transition: transform 1s;
