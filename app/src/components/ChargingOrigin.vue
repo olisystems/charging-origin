@@ -557,6 +557,17 @@ export default {
         .on("error", console.error);
     },
 
+    watchData() {
+      this.testContract.events
+        .Data({
+          fromBlock: "latest"
+        })
+        .on("data", function(event) {
+          console.log(event); // same results as the optional callback above
+        })
+        .on("error", console.error);
+    },
+
     plotLiveProduction() {
       if (this.thuPV.length > 10) {
         this.thuPV = this.thuPV.slice(-10);
