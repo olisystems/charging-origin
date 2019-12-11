@@ -69,9 +69,7 @@
           <div class="header">
             <h3>THU PV & Examesh WPP Energy Percentage</h3>
           </div>
-          <div id="percentage-plot">
-            <h5 class="loader">Loading...</h5>
-          </div>
+          <div id="percentage-plot"></div>
         </div>
       </div>
     </div>
