@@ -11,14 +11,44 @@ contract ChargingOrigin {
     uint256 public totalThuPvProd;
     uint256 public totalExameshWppProd;
 
+    // consumer struct
+    struct Consumer {
+        string name;
+        uint32 latitude;
+        uint32 longitude;
+        bool isRegistered;
+    }
+
+    // list of registered consumer
+    address[] public consumerList;
+
     // events
-    event Consumption(address consumer, uint256 consumption, uint256 timestamp);
+    event Consumption(address consumer, uint256 consumption, string location, uint256 timestamp);
     event Production(address producer, string name, uint256 production, uint256 timestamp);
+    event ConsumerRegistration(address addressCP, string name, uint32 latitude, uint32 longitude);
+
+    // map address to consumer
+    mapping(address => Consumer)consumers;
 
     // functions
-    function sendConsumption(uint256 _consumption) public {
+    // register consumer
+    function registerConsumer(string memory _name, uint32 _latitude, uint32 _longitude) public {
+        require(_isRegistered(msg.sender) != true, 'Consumer is already registered');
+        consumers[msg.sender] = Consumer(_name, _latitude, _longitude, true);
+        consumerList.push(msg.sender);
+        emit ConsumerRegistration(msg.sender, _name, _latitude, _longitude);
+    }
+
+    // check registration
+    function _isRegistered(address _address) internal view returns (bool status){
+        status = consumers[_address].isRegistered;
+        return status;
+    }
+
+    function sendConsumption(uint256 _consumption, string memory _location) public {
+        require(_isRegistered(msg.sender) == true, 'Registration is required');
         totalConsumption = totalConsumption.add(_consumption);
-        emit Consumption(msg.sender, _consumption, block.timestamp);
+        emit Consumption(msg.sender, _consumption, _location, block.timestamp);
     }
 
     function sendProduction(uint256 _production, string memory _name) public {

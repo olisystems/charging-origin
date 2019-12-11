@@ -27,4 +27,24 @@ export default {
 body {
   margin: 0;
 }
+
+/*current consumer popop style*/
+.currentCons-popup .leaflet-popup-content-wrapper {
+  background: #e68a00;
+  color: white;
+  font-size: 12px;
+  line-height: 24px;
+  border-radius: 0px;
+}
+
+.currentCons-popup .leaflet-popup-tip-container {
+  width: 50px;
+  height: 15px;
+}
+
+.currentCons-popup .leaflet-popup-tip {
+  background: #e68a00;
+  border: white;
+  box-shadow: none;
+}
 </style>
