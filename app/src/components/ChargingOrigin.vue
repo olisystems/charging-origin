@@ -470,9 +470,12 @@ export default {
     plotPercentage() {
       var data = [
         {
-          values: [this.totalTHU, this.totalExamesh],
-          labels: ["THU PV", "Examesh WPP"],
-          type: "pie"
+          values: [this.totalTHU, this.totalExamesh, 0],
+          labels: ["THU PV", "Examesh WPP", "Gray Power"],
+          type: "pie",
+          marker: {
+            colors: ["#1f77b4", "#ff7f0e", "#7f7f7f"]
+          }
         }
       ];
 
@@ -485,6 +488,7 @@ export default {
           y: 1.2,
           x: 0.5
         },
+
         margin: {
           r: 20,
           l: 20,
