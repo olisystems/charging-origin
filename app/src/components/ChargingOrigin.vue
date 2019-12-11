@@ -41,18 +41,20 @@
                   <th>Time</th>
                 </thead>
 
-                <transition-group name="test2" tag="tbody" slot="body" slot-scope="{displayData}">
+                <tbody slot="body" slot-scope="{displayData}">
                   <tr v-for="(row, index) in displayData" :key="index">
                     <td
                       v-tooltip="row.consumer"
                       v-on:click="getCurrentConsMarker"
                       class="consumer-address"
                     >{{row.consumer}}</td>
+
                     <td>{{row.power[row.power.length-1]}}</td>
+
                     <td v-tooltip="row.location">{{row.location}}</td>
                     <td v-tooltip="row.time[row.time.length-1]">{{row.time[row.time.length-1]}}</td>
                   </tr>
-                </transition-group>
+                </tbody>
               </v-table>
               <h5 class="loader">Loading...</h5>
             </div>
