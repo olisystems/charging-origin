@@ -139,9 +139,11 @@ export default {
       totalConsumption: "",
       consumptionEvents: [],
       thuPV: [],
+      thuPVPower: [], // array to hold only power values
       uniqueThuPV: [],
       uniqueExameshWpp: [],
       exameshWPP: [],
+      exameshWPPPower: [], // array to hold only power values
       sumProduction: [], //thuPV + exameshWPP production
       // spatial distribution starts here
       map: null,
@@ -467,14 +469,26 @@ export default {
               timeConverter(event.returnValues.timestamp)
             );
           }
+
+          this.callPublicData();
+          this.plotPercentage();
         })
         .on("error", console.error);
     },
 
     plotPercentage() {
+
+      if (this.thuPVPower.length > 1 && this.exameshWPPPower.length > 1) {
+        let tempThuPower = this.thuPVPower[this.thuPVPower.length - 1];
+        let tempExameshPower = this.exameshWPPPower[
+          this.exameshWPPPower.length - 1
+        ];
+
+        console.log(tempThuPower, tempExameshPower, 0);
+
       var data = [
         {
-          values: [this.totalTHU, this.totalExamesh, 0],
+            values: [tempThuPower, tempExameshPower, 0],
           labels: ["THU PV", "Examesh WPP", "Gray Power"],
           type: "pie",
           marker: {
@@ -532,11 +546,15 @@ export default {
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
+            // for pie chart
+            this.thuPVPower.push(event.returnValues[2]);
           } else if (event.returnValues[1] === "Examesh WPP") {
             this.exameshWPP.push({
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
+            // for pie chart
+            this.exameshWPPPower.push(event.returnValues[2]);
           }
 
           const index = this.sumProduction.findIndex(
