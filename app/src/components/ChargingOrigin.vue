@@ -486,37 +486,38 @@ export default {
 
         console.log(tempThuPower, tempExameshPower, 0);
 
-      var data = [
-        {
+        var data = [
+          {
             values: [tempThuPower, tempExameshPower, 0],
-          labels: ["THU PV", "Examesh WPP", "Gray Power"],
-          type: "pie",
-          marker: {
-            colors: ["#1f77b4", "#ff7f0e", "#7f7f7f"]
+            labels: ["THU PV", "Examesh WPP", "Gray Power"],
+            type: "pie",
+            marker: {
+              colors: ["#1f77b4", "#ff7f0e", "#7f7f7f"]
+            }
           }
-        }
-      ];
+        ];
 
-      var layout = {
-        height: 350,
+        var layout = {
+          height: 350,
 
-        legend: {
-          orientation: "h",
-          xanchor: "center",
-          y: 1.2,
-          x: 0.5
-        },
+          legend: {
+            orientation: "h",
+            xanchor: "center",
+            y: 1.2,
+            x: 0.5
+          },
 
-        margin: {
-          r: 20,
-          l: 20,
-          b: 20,
-          t: 20,
-          pad: 10
-        }
-      };
+          margin: {
+            r: 20,
+            l: 20,
+            b: 0,
+            t: 40,
+            pad: 10
+          }
+        };
 
-      Plotly.newPlot("percentage-plot", data, layout, { responsive: true });
+        Plotly.newPlot("percentage-plot", data, layout, { responsive: true });
+      }
     },
 
     getUnique(arr, comp) {
@@ -672,7 +673,7 @@ export default {
         },
         margin: {
           r: 50,
-          l: 90,
+          l: 70,
           b: 50,
           t: 20,
           pad: 10
@@ -695,7 +696,6 @@ export default {
     this.watchRealTimeProduction();
     this.watchRealTimeConsumption();
     this.addConsMarkers();
-    this.plotPercentage();
     this.watchData();
   },
   mounted() {
