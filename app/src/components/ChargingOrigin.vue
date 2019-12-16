@@ -112,6 +112,13 @@
             <h5 class="loader">Loading...</h5>
           </div>
         </div>
+
+        <div class="test wrapper">
+          <div class="header">
+            <h3>THU PV, Examesh WPP & Consumption</h3>
+          </div>
+          <div id="percentage-plot2"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -138,6 +145,7 @@ export default {
       totalProduction: "",
       totalConsumption: "",
       consumptionEvents: [],
+      consumptionPower: [], // array to hold consumption values
       thuPV: [],
       thuPVPower: [], // array to hold only power values
       uniqueThuPV: [],
@@ -469,6 +477,8 @@ export default {
               timeConverter(event.returnValues.timestamp)
             );
           }
+          // store only consumption values for pie chart
+          this.consumptionPower.push(event.returnValues.consumption);
 
           this.callPublicData();
           this.plotPercentage();
@@ -477,14 +487,11 @@ export default {
     },
 
     plotPercentage() {
-
       if (this.thuPVPower.length > 1 && this.exameshWPPPower.length > 1) {
         let tempThuPower = this.thuPVPower[this.thuPVPower.length - 1];
         let tempExameshPower = this.exameshWPPPower[
           this.exameshWPPPower.length - 1
         ];
-
-        console.log(tempThuPower, tempExameshPower, 0);
 
         var data = [
           {
@@ -517,6 +524,54 @@ export default {
         };
 
         Plotly.newPlot("percentage-plot", data, layout, { responsive: true });
+      }
+    },
+
+    plotPercentage2() {
+      if (
+        this.thuPVPower.length > 1 &&
+        this.exameshWPPPower.length > 1 &&
+        this.consumptionPower.length > 1
+      ) {
+        let tempThuPower = this.thuPVPower[this.thuPVPower.length - 1];
+        let tempExameshPower = this.exameshWPPPower[
+          this.exameshWPPPower.length - 1
+        ];
+        let tempConsumptionPower = this.consumptionPower[
+          this.consumptionPower.length - 1
+        ];
+
+        var data = [
+          {
+            values: [tempThuPower, tempExameshPower, tempConsumptionPower],
+            labels: ["THU PV", "Examesh WPP", "Consumption"],
+            type: "pie",
+            marker: {
+              colors: ["#1f77b4", "#7f7f7f", "#ff7f0e"]
+            }
+          }
+        ];
+
+        var layout = {
+          height: 350,
+
+          legend: {
+            orientation: "h",
+            xanchor: "center",
+            y: 1.2,
+            x: 0.5
+          },
+
+          margin: {
+            r: 20,
+            l: 20,
+            b: 0,
+            t: 40,
+            pad: 10
+          }
+        };
+
+        Plotly.newPlot("percentage-plot2", data, layout, { responsive: true });
       }
     },
 
@@ -685,6 +740,7 @@ export default {
   watch: {
     totalConsumption() {
       this.plotPercentage();
+      this.plotPercentage2();
     }
   },
 
@@ -774,8 +830,19 @@ h4 {
   padding: 0.5rem;
 }
 
+.thu-examesh {
+  width: 34%;
+  padding: 0.5rem;
+  min-height: 350px;
+}
+
 .realTime-table {
-  width: 45%;
+  width: 30%;
+  padding: 0.5rem;
+}
+
+.test {
+  width: 30%;
   padding: 0.5rem;
 }
 
@@ -789,12 +856,6 @@ h4 {
 
 .active-consumer {
   background-color: #ecbe78;
-}
-
-.thu-examesh {
-  width: 45%;
-  padding: 0.5rem;
-  min-height: 350px;
 }
 
 #production-plot,
