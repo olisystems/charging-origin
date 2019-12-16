@@ -10,12 +10,12 @@
         <div class="stat">
           <p>Examesh WPP</p>
           <h4>{{totalExamesh}}</h4>
-          <p class="sub-heading">Total Production [kWh]</p>
+          <p class="sub-heading">Total Production [MWh]</p>
         </div>
         <div class="stat">
           <p>Total Production</p>
           <h4 class="prod-color">{{totalProduction}}</h4>
-          <p class="sub-heading">[kWh]</p>
+          <p class="sub-heading">[MWh]</p>
         </div>
         <div class="stat">
           <p>Total Consumption</p>
@@ -183,25 +183,25 @@ export default {
       const production = await this.contract.methods
         .totalThuPvProd()
         .call({ from: this.account });
-      this.totalTHU = production;
+      this.totalTHU = this.kFormatter(production);
     },
     async getTotalExameshProduction() {
       const production = await this.contract.methods
         .totalExameshWppProd()
         .call({ from: this.account });
-      this.totalExamesh = production;
+      this.totalExamesh = this.kFormatter(production / 1000);
     },
     async getTotalProduction() {
       const production = await this.contract.methods
         .totalProduction()
         .call({ from: this.account });
-      this.totalProduction = production;
+      this.totalProduction = this.kFormatter(production / 1000);
     },
     async getTotalConsumption() {
       const consumption = await this.contract.methods
         .totalConsumption()
         .call({ from: this.account });
-      this.totalConsumption = consumption;
+      this.totalConsumption = this.kFormatter(consumption);
     },
 
     callPublicData() {
@@ -547,7 +547,7 @@ export default {
             labels: ["THU PV", "Examesh WPP", "Consumption"],
             type: "pie",
             marker: {
-              colors: ["#1f77b4", "#7f7f7f", "#ff7f0e"]
+              colors: ["#1f77b4", "#ff7f0e", "#d62728"]
             }
           }
         ];
@@ -587,6 +587,12 @@ export default {
         .map(e => arr[e]);
 
       return unique;
+    },
+
+    kFormatter(num) {
+      return Math.abs(num) > 999
+        ? Math.sign(num) * (Math.abs(num) / 1000).toFixed(1) + "k"
+        : Math.sign(num) * Math.abs(num);
     },
 
     watchRealTimeProduction() {
