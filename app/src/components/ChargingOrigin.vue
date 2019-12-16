@@ -10,12 +10,12 @@
         <div class="stat">
           <p>Examesh WPP</p>
           <h4>{{totalExamesh}}</h4>
-          <p class="sub-heading">Total Production [kWh]</p>
+          <p class="sub-heading">Total Production [MWh]</p>
         </div>
         <div class="stat">
           <p>Total Production</p>
           <h4 class="prod-color">{{totalProduction}}</h4>
-          <p class="sub-heading">[kWh]</p>
+          <p class="sub-heading">[MWh]</p>
         </div>
         <div class="stat">
           <p>Total Consumption</p>
@@ -112,6 +112,13 @@
             <h5 class="loader">Loading...</h5>
           </div>
         </div>
+
+        <div class="test wrapper">
+          <div class="header">
+            <h3>THU PV, Examesh WPP & Consumption</h3>
+          </div>
+          <div id="percentage-plot2"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -138,10 +145,13 @@ export default {
       totalProduction: "",
       totalConsumption: "",
       consumptionEvents: [],
+      consumptionPower: [], // array to hold consumption values
       thuPV: [],
+      thuPVPower: [], // array to hold only power values
       uniqueThuPV: [],
       uniqueExameshWpp: [],
       exameshWPP: [],
+      exameshWPPPower: [], // array to hold only power values
       sumProduction: [], //thuPV + exameshWPP production
       // spatial distribution starts here
       map: null,
@@ -173,25 +183,25 @@ export default {
       const production = await this.contract.methods
         .totalThuPvProd()
         .call({ from: this.account });
-      this.totalTHU = production;
+      this.totalTHU = this.kFormatter(production);
     },
     async getTotalExameshProduction() {
       const production = await this.contract.methods
         .totalExameshWppProd()
         .call({ from: this.account });
-      this.totalExamesh = production;
+      this.totalExamesh = this.kFormatter(production / 1000);
     },
     async getTotalProduction() {
       const production = await this.contract.methods
         .totalProduction()
         .call({ from: this.account });
-      this.totalProduction = production;
+      this.totalProduction = this.kFormatter(production / 1000);
     },
     async getTotalConsumption() {
       const consumption = await this.contract.methods
         .totalConsumption()
         .call({ from: this.account });
-      this.totalConsumption = consumption;
+      this.totalConsumption = this.kFormatter(consumption);
     },
 
     callPublicData() {
@@ -467,42 +477,102 @@ export default {
               timeConverter(event.returnValues.timestamp)
             );
           }
+          // store only consumption values for pie chart
+          this.consumptionPower.push(event.returnValues.consumption);
+
+          this.callPublicData();
+          this.plotPercentage();
         })
         .on("error", console.error);
     },
 
     plotPercentage() {
-      var data = [
-        {
-          values: [this.totalTHU, this.totalExamesh, 0],
-          labels: ["THU PV", "Examesh WPP", "Gray Power"],
-          type: "pie",
-          marker: {
-            colors: ["#1f77b4", "#ff7f0e", "#7f7f7f"]
+      if (this.thuPVPower.length > 1 && this.exameshWPPPower.length > 1) {
+        let tempThuPower = this.thuPVPower[this.thuPVPower.length - 1];
+        let tempExameshPower = this.exameshWPPPower[
+          this.exameshWPPPower.length - 1
+        ];
+
+        var data = [
+          {
+            values: [tempThuPower, tempExameshPower, 0],
+            labels: ["THU PV", "Examesh WPP", "Gray Power"],
+            type: "pie",
+            marker: {
+              colors: ["#1f77b4", "#ff7f0e", "#7f7f7f"]
+            }
           }
-        }
-      ];
+        ];
 
-      var layout = {
-        height: 350,
+        var layout = {
+          height: 350,
 
-        legend: {
-          orientation: "h",
-          xanchor: "center",
-          y: 1.2,
-          x: 0.5
-        },
+          legend: {
+            orientation: "h",
+            xanchor: "center",
+            y: 1.2,
+            x: 0.5
+          },
 
-        margin: {
-          r: 20,
-          l: 20,
-          b: 20,
-          t: 20,
-          pad: 10
-        }
-      };
+          margin: {
+            r: 20,
+            l: 20,
+            b: 0,
+            t: 40,
+            pad: 10
+          }
+        };
 
-      Plotly.newPlot("percentage-plot", data, layout, { responsive: true });
+        Plotly.newPlot("percentage-plot", data, layout, { responsive: true });
+      }
+    },
+
+    plotPercentage2() {
+      if (
+        this.thuPVPower.length > 1 &&
+        this.exameshWPPPower.length > 1 &&
+        this.consumptionPower.length > 1
+      ) {
+        let tempThuPower = this.thuPVPower[this.thuPVPower.length - 1];
+        let tempExameshPower = this.exameshWPPPower[
+          this.exameshWPPPower.length - 1
+        ];
+        let tempConsumptionPower = this.consumptionPower[
+          this.consumptionPower.length - 1
+        ];
+
+        var data = [
+          {
+            values: [tempThuPower, tempExameshPower, tempConsumptionPower],
+            labels: ["THU PV", "Examesh WPP", "Consumption"],
+            type: "pie",
+            marker: {
+              colors: ["#1f77b4", "#ff7f0e", "#d62728"]
+            }
+          }
+        ];
+
+        var layout = {
+          height: 350,
+
+          legend: {
+            orientation: "h",
+            xanchor: "center",
+            y: 1.2,
+            x: 0.5
+          },
+
+          margin: {
+            r: 20,
+            l: 20,
+            b: 0,
+            t: 40,
+            pad: 10
+          }
+        };
+
+        Plotly.newPlot("percentage-plot2", data, layout, { responsive: true });
+      }
     },
 
     getUnique(arr, comp) {
@@ -519,6 +589,12 @@ export default {
       return unique;
     },
 
+    kFormatter(num) {
+      return Math.abs(num) > 999
+        ? Math.sign(num) * (Math.abs(num) / 1000).toFixed(1) + "k"
+        : Math.sign(num) * Math.abs(num);
+    },
+
     watchRealTimeProduction() {
       this.contract.events
         .Production({
@@ -532,11 +608,15 @@ export default {
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
+            // for pie chart
+            this.thuPVPower.push(event.returnValues[2]);
           } else if (event.returnValues[1] === "Examesh WPP") {
             this.exameshWPP.push({
               energy: event.returnValues[2],
               time: timeConverter(event.returnValues[3])
             });
+            // for pie chart
+            this.exameshWPPPower.push(event.returnValues[2]);
           }
 
           const index = this.sumProduction.findIndex(
@@ -654,7 +734,7 @@ export default {
         },
         margin: {
           r: 50,
-          l: 90,
+          l: 70,
           b: 50,
           t: 20,
           pad: 10
@@ -666,6 +746,7 @@ export default {
   watch: {
     totalConsumption() {
       this.plotPercentage();
+      this.plotPercentage2();
     }
   },
 
@@ -677,7 +758,6 @@ export default {
     this.watchRealTimeProduction();
     this.watchRealTimeConsumption();
     this.addConsMarkers();
-    this.plotPercentage();
     this.watchData();
   },
   mounted() {
@@ -756,8 +836,19 @@ h4 {
   padding: 0.5rem;
 }
 
+.thu-examesh {
+  width: 34%;
+  padding: 0.5rem;
+  min-height: 350px;
+}
+
 .realTime-table {
-  width: 45%;
+  width: 30%;
+  padding: 0.5rem;
+}
+
+.test {
+  width: 30%;
   padding: 0.5rem;
 }
 
@@ -771,12 +862,6 @@ h4 {
 
 .active-consumer {
   background-color: #ecbe78;
-}
-
-.thu-examesh {
-  width: 45%;
-  padding: 0.5rem;
-  min-height: 350px;
 }
 
 #production-plot,
