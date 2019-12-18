@@ -4,3 +4,5 @@ node_modules
 .idea
 
 app/src/assets/testingScript
+
+app/src/assets/ChargingOrigin-mqtt-code/node_modules
