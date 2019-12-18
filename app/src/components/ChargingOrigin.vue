@@ -1,6 +1,10 @@
 <template>
   <div class="main">
     <div class="top-bar">
+      <div class="top-header">
+        <!-- <h1>OLI Systems</h1> -->
+        <img src="../assets/img/OLI_logo.png" alt="gg" />
+      </div>
       <div class="stats">
         <div class="stat">
           <p>THU PV</p>
