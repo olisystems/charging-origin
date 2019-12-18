@@ -188,25 +188,29 @@ export default {
       const production = await this.contract.methods
         .totalThuPvProd()
         .call({ from: this.account });
-      this.totalTHU = this.kFormatter(production);
+      this.totalTHU = ((production / 1000000) * (10 / 3600)).toFixed(3);
     },
     async getTotalExameshProduction() {
       const production = await this.contract.methods
         .totalExameshWppProd()
         .call({ from: this.account });
-      this.totalExamesh = this.kFormatter(production / 1000);
+      this.totalExamesh = ((production / 1000000) * (10 / 3600)).toFixed(3);
     },
     async getTotalProduction() {
       const production = await this.contract.methods
         .totalProduction()
         .call({ from: this.account });
-      this.totalProduction = this.kFormatter(production / 1000);
+      this.totalProduction = ((production / 1000000) * (10 / 3600)).toFixed(3);
     },
     async getTotalConsumption() {
       const consumption = await this.contract.methods
         .totalConsumption()
         .call({ from: this.account });
-      this.totalConsumption = this.kFormatter(consumption);
+      this.totalConsumption = ((consumption / 1000000) * (10 / 3600)).toFixed(
+        3
+      );
+
+      this.totalConsumptionEvent = consumption;
     },
 
     callPublicData() {
