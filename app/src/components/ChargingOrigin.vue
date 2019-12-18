@@ -70,7 +70,7 @@
           <div id="map"></div>
         </div>
 
-        <div class="pie-chart wrapper">
+        <div class="percentage-pie-chart wrapper">
           <div class="header">
             <h3>Charging Power Origin</h3>
           </div>
@@ -79,9 +79,9 @@
       </div>
     </div>
 
-    <div class="live-data">
-      <div class="live-data-wrapper">
-        <div class="wrapper realTime-table">
+    <div class="generation-data">
+      <div class="generation-data-wrapper">
+        <div class="wrapper generation-table">
           <div class="header">
             <h3>Generation Assets Overview</h3>
           </div>
@@ -109,7 +109,7 @@
           </div>
         </div>
 
-        <div class="thu-examesh wrapper">
+        <div class="thu-examesh-pie wrapper">
           <div class="header">
             <h3>Generation Assets Plot</h3>
           </div>
@@ -117,13 +117,6 @@
             <h5 class="loader">Loading...</h5>
           </div>
         </div>
-
-        <!-- <div class="test wrapper">
-          <div class="header">
-            <h3>THU PV, Examesh WPP & Consumption</h3>
-          </div>
-          <div id="percentage-plot2"></div>
-        </div>-->
       </div>
     </div>
   </div>
@@ -135,14 +128,12 @@ const $ = require("jquery");
 import { timeConverter } from "../assets/js/time-format";
 import Plotly from "plotly.js-dist";
 import ContractInstance from "../assets/js/ContractInstance";
-import TestInstance from "../assets/js/testInstance";
 import L from "leaflet";
 
 export default {
   name: "ChargingOrigin",
   data() {
     return {
-      testContract: "",
       account: "",
       contract: "",
       totalTHU: "",
@@ -497,7 +488,6 @@ export default {
           }
 
           this.callPublicData();
-          //this.plotPercentage();
         })
         .on("error", console.error);
     },
@@ -551,74 +541,6 @@ export default {
       }
     },
 
-    plotPercentage2() {
-      if (
-        this.thuPVPower.length > 1 &&
-        this.exameshWPPPower.length > 1 &&
-        this.consumptionPower.length > 1
-      ) {
-        let tempThuPower = this.thuPVPower[this.thuPVPower.length - 1];
-        let tempExameshPower = this.exameshWPPPower[
-          this.exameshWPPPower.length - 1
-        ];
-        let tempConsumptionPower = this.consumptionPower[
-          this.consumptionPower.length - 1
-        ];
-
-        var data = [
-          {
-            values: [tempThuPower, tempExameshPower, tempConsumptionPower],
-            labels: ["THU PV", "Examesh WPP", "Consumption"],
-            type: "pie",
-            marker: {
-              colors: ["#1f77b4", "#ff7f0e", "#d62728"]
-            }
-          }
-        ];
-
-        var layout = {
-          height: 360,
-
-          legend: {
-            orientation: "h",
-            xanchor: "center",
-            y: 1.2,
-            x: 0.5
-          },
-
-          margin: {
-            r: 20,
-            l: 20,
-            b: 0,
-            t: 40,
-            pad: 10
-          }
-        };
-
-        Plotly.newPlot("percentage-plot2", data, layout, { responsive: true });
-      }
-    },
-
-    getUnique(arr, comp) {
-      const unique = arr
-        .map(e => e[comp])
-
-        // store the keys of the unique objects
-        .map((e, i, final) => final.indexOf(e) === i && i)
-
-        // eliminate the dead keys & store unique objects
-        .filter(e => arr[e])
-        .map(e => arr[e]);
-
-      return unique;
-    },
-
-    kFormatter(num) {
-      return Math.abs(num) > 999
-        ? Math.sign(num) * (Math.abs(num) / 1000).toFixed(1) + "k"
-        : Math.sign(num) * Math.abs(num);
-    },
-
     watchRealTimeProduction() {
       this.contract.events
         .Production({
@@ -662,17 +584,6 @@ export default {
 
           this.callPublicData();
           this.plotLiveProduction();
-        })
-        .on("error", console.error);
-    },
-
-    watchData() {
-      this.testContract.events
-        .Data({
-          fromBlock: "latest"
-        })
-        .on("data", function(event) {
-          console.log(event); // same results as the optional callback above
         })
         .on("error", console.error);
     },
@@ -766,25 +677,45 @@ export default {
         }
       };
       Plotly.newPlot("production-plot", data, layout, { responsive: true });
+    },
+
+    // utility functions
+    getUnique(arr, comp) {
+      const unique = arr
+        .map(e => e[comp])
+
+        // store the keys of the unique objects
+        .map((e, i, final) => final.indexOf(e) === i && i)
+
+        // eliminate the dead keys & store unique objects
+        .filter(e => arr[e])
+        .map(e => arr[e]);
+
+      return unique;
+    },
+
+    kFormatter(num) {
+      return Math.abs(num) > 999
+        ? Math.sign(num) * (Math.abs(num) / 1000).toFixed(1) + "k"
+        : Math.sign(num) * Math.abs(num);
     }
   },
+
   watch: {
     consumptionPower() {
       this.plotPercentage();
-      //this.plotPercentage2();
     }
   },
 
   async created() {
     this.getMetamaskAccount();
     this.contract = await ContractInstance();
-    this.testContract = await TestInstance();
     this.callPublicData();
     this.watchRealTimeProduction();
     this.watchRealTimeConsumption();
     this.addConsMarkers();
-    this.watchData();
   },
+
   mounted() {
     this.initMap();
   }
@@ -834,6 +765,7 @@ td {
   color: #394f7c;
   font-weight: bold;
 }
+
 .stat {
   padding-bottom: 1rem;
 }
@@ -851,13 +783,8 @@ td {
   color: #cc6600;
 }
 
-.sub-heading {
-  font-size: 0.8rem;
-  font-style: italic;
-}
-
-.live-data,
-.percentage {
+.percentage,
+.generation-data {
   padding: 1rem;
   background-color: rgba(245, 239, 239, 0.582);
 }
@@ -868,40 +795,49 @@ td {
   margin: 1.5rem 0.1rem;
 }
 
-.live-data-wrapper {
-  display: flex;
-  justify-content: space-around;
-  margin: 1.5rem 0.1rem;
-}
-
-.live-data {
-  padding-top: 0;
-}
-
 .percentage-wrapper {
   margin-bottom: 0;
 }
 
 .consumption-table,
-.pie-chart {
+.percentage-pie-chart {
   width: 30%;
   padding: 0.5rem;
 }
 
-.thu-examesh {
-  width: 50%;
-  padding: 0.5rem;
-  min-height: 360px;
+.map {
+  width: 35%;
+  height: 445px;
 }
 
-.realTime-table {
+#map {
+  position: center;
+  width: 100% !important;
+  height: 100%;
+  margin: auto;
+  border: 1px solid #d2d4d6;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+}
+
+.generation-data-wrapper {
+  display: flex;
+  justify-content: space-around;
+  margin: 1.5rem 0.1rem;
+}
+
+.generation-data {
+  padding-top: 0;
+}
+
+.generation-table {
   width: 40%;
   padding: 0.5rem;
 }
 
-.test {
-  width: 30%;
+.thu-examesh-pie {
+  width: 50%;
   padding: 0.5rem;
+  min-height: 360px;
 }
 
 .consumer-address {
@@ -916,45 +852,8 @@ td {
   background-color: #ecbe78;
 }
 
-#production-plot,
-#plot {
+#production-plot {
   width: 100%;
   height: 360px;
-}
-
-.test-enter, .test2-enter /* .list-leave-active below version 2.1.8 */ {
-  opacity: 50;
-  transform: translateY(-5px);
-  background-color: #a2d893;
-}
-
-.test-move,
-.test2-move {
-  transition: transform 1s;
-}
-
-.test-enter-active,
-.test2-enter-active {
-  transition: all 1s ease-in-out;
-}
-
-.map {
-  width: 35%;
-  height: 445px;
-}
-
-.prod-cons {
-  width: 35%;
-  padding: 0.5rem;
-  min-height: 360px;
-}
-
-#map {
-  position: center;
-  width: 100% !important;
-  height: 100%;
-  margin: auto;
-  border: 1px solid #d2d4d6;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
 }
 </style>
