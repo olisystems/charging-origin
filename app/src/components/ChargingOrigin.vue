@@ -1,26 +1,31 @@
 <template>
   <div class="main">
     <div class="top-bar">
+      <div class="top-header">
+        <!-- <h1>OLI Systems</h1> -->
+        <img src="../assets/img/OLI_logo.png" alt="gg" />
+      </div>
       <div class="stats">
         <div class="stat">
-          <p>THU PV</p>
-          <h4>{{totalTHU}}</h4>
-          <p class="sub-heading">Total Production [kWh]</p>
+          <p class="top-heading">THU PV</p>
+          <span class="value-span">{{totalTHU}}</span>
+          <span></span>
+          <span class="sub-span">MWh</span>
         </div>
         <div class="stat">
-          <p>Examesh WPP</p>
-          <h4>{{totalExamesh}}</h4>
-          <p class="sub-heading">Total Production [MWh]</p>
+          <p class="top-heading">Examesh WPP</p>
+          <span class="value-span">{{totalExamesh}}</span>
+          <span class="sub-span">MWh</span>
         </div>
         <div class="stat">
-          <p>Total Production</p>
-          <h4 class="prod-color">{{totalProduction}}</h4>
-          <p class="sub-heading">[MWh]</p>
+          <p class="top-heading">Total Production</p>
+          <span class="prod-color value-span">{{totalProduction}}</span>
+          <span class="sub-span">MWh</span>
         </div>
         <div class="stat">
-          <p>Total Consumption</p>
-          <h4 class="cons-color">{{totalConsumption}}</h4>
-          <p class="sub-heading">[kWh]</p>
+          <p class="top-heading">Total Consumption</p>
+          <span class="cons-color value-span">{{totalConsumption}}</span>
+          <span class="sub-span">MWh</span>
         </div>
       </div>
     </div>
@@ -29,14 +34,14 @@
       <div class="percentage-wrapper">
         <div class="wrapper consumption-table">
           <div class="header">
-            <h3>Real Time Energy Consumption</h3>
+            <h3>Charging Stations Overview</h3>
           </div>
           <div class="table">
             <div class="table-wrapper">
               <v-table :data="consumptionEvents">
                 <thead slot="head">
                   <th>ETH Address</th>
-                  <th>Power</th>
+                  <th>Power [kW]</th>
                   <th>Location</th>
                   <th>Time</th>
                 </thead>
@@ -49,7 +54,7 @@
                       class="consumer-address"
                     >{{row.consumer}}</td>
 
-                    <td>{{row.power[row.power.length-1]}}</td>
+                    <td>{{row.power[row.power.length-1]/1000}}</td>
 
                     <td v-tooltip="row.location">{{row.location}}</td>
                     <td v-tooltip="row.time[row.time.length-1]">{{row.time[row.time.length-1]}}</td>
@@ -67,7 +72,7 @@
 
         <div class="pie-chart wrapper">
           <div class="header">
-            <h3>THU PV & Examesh WPP Energy Percentage</h3>
+            <h3>Charging Power Origin</h3>
           </div>
           <div id="percentage-plot"></div>
         </div>
@@ -78,7 +83,7 @@
       <div class="live-data-wrapper">
         <div class="wrapper realTime-table">
           <div class="header">
-            <h3>Real Time Energy Production</h3>
+            <h3>Generation Assets Overview</h3>
           </div>
           <div class="table">
             <div class="table-wrapper">
@@ -86,7 +91,7 @@
                 <thead slot="head">
                   <th>ETH Address</th>
                   <th>Name</th>
-                  <th>Power</th>
+                  <th>Power [kW]</th>
                   <th>Time</th>
                 </thead>
 
@@ -94,7 +99,7 @@
                   <tr v-for="(row, index) in displayData" :key="index">
                     <td v-tooltip="row.producer">{{row.producer}}</td>
                     <td>{{row.name}}</td>
-                    <td>{{row.power[row.power.length-1]}}</td>
+                    <td>{{row.power[row.power.length-1]/1000}}</td>
                     <td v-tooltip="row.time[row.time.length-1]">{{row.time[row.time.length-1]}}</td>
                   </tr>
                 </transition-group>
@@ -106,19 +111,19 @@
 
         <div class="thu-examesh wrapper">
           <div class="header">
-            <h3>THU PV & Examesh WPP Energy Production</h3>
+            <h3>Generation Assets Plot</h3>
           </div>
           <div id="production-plot">
             <h5 class="loader">Loading...</h5>
           </div>
         </div>
 
-        <div class="test wrapper">
+        <!-- <div class="test wrapper">
           <div class="header">
             <h3>THU PV, Examesh WPP & Consumption</h3>
           </div>
           <div id="percentage-plot2"></div>
-        </div>
+        </div>-->
       </div>
     </div>
   </div>
@@ -144,6 +149,7 @@ export default {
       totalExamesh: "",
       totalProduction: "",
       totalConsumption: "",
+      totalConsumptionEvent: "",
       consumptionEvents: [],
       consumptionPower: [], // array to hold consumption values
       thuPV: [],
@@ -183,25 +189,29 @@ export default {
       const production = await this.contract.methods
         .totalThuPvProd()
         .call({ from: this.account });
-      this.totalTHU = this.kFormatter(production);
+      this.totalTHU = ((production / 1000000) * (10 / 3600)).toFixed(3);
     },
     async getTotalExameshProduction() {
       const production = await this.contract.methods
         .totalExameshWppProd()
         .call({ from: this.account });
-      this.totalExamesh = this.kFormatter(production / 1000);
+      this.totalExamesh = ((production / 1000000) * (10 / 3600)).toFixed(3);
     },
     async getTotalProduction() {
       const production = await this.contract.methods
         .totalProduction()
         .call({ from: this.account });
-      this.totalProduction = this.kFormatter(production / 1000);
+      this.totalProduction = ((production / 1000000) * (10 / 3600)).toFixed(3);
     },
     async getTotalConsumption() {
       const consumption = await this.contract.methods
         .totalConsumption()
         .call({ from: this.account });
-      this.totalConsumption = this.kFormatter(consumption);
+      this.totalConsumption = ((consumption / 1000000) * (10 / 3600)).toFixed(
+        3
+      );
+
+      this.totalConsumptionEvent = consumption;
     },
 
     callPublicData() {
@@ -430,7 +440,7 @@ export default {
       };
 
       this.map = L.map("map", {
-        center: [48.7, 9.4],
+        center: [48.76, 9.4],
         zoom: 9,
         layers: openStreet
       });
@@ -477,25 +487,39 @@ export default {
               timeConverter(event.returnValues.timestamp)
             );
           }
-          // store only consumption values for pie chart
-          this.consumptionPower.push(event.returnValues.consumption);
+
+          if (
+            event.returnValues.consumer ===
+            "0x3D481ee06aFe587dAe5EAFA541c75c3D1F9dCdBc"
+          ) {
+            // store only consumption values for pie chart
+            this.consumptionPower.push(event.returnValues.consumption);
+          }
 
           this.callPublicData();
-          this.plotPercentage();
+          //this.plotPercentage();
         })
         .on("error", console.error);
     },
 
     plotPercentage() {
-      if (this.thuPVPower.length > 1 && this.exameshWPPPower.length > 1) {
+      if (
+        this.thuPVPower.length > 1 &&
+        this.exameshWPPPower.length > 1 &&
+        this.consumptionPower.length > 1
+      ) {
         let tempThuPower = this.thuPVPower[this.thuPVPower.length - 1];
-        let tempExameshPower = this.exameshWPPPower[
-          this.exameshWPPPower.length - 1
+        // let tempExameshPower = this.exameshWPPPower[
+        //   this.exameshWPPPower.length - 1
+        // ];
+
+        let tempConsumption = this.consumptionPower[
+          this.consumptionPower.length - 1
         ];
 
         var data = [
           {
-            values: [tempThuPower, tempExameshPower, 0],
+            values: [tempThuPower, tempConsumption - tempThuPower, 0],
             labels: ["THU PV", "Examesh WPP", "Gray Power"],
             type: "pie",
             marker: {
@@ -505,7 +529,7 @@ export default {
         ];
 
         var layout = {
-          height: 350,
+          height: 360,
 
           legend: {
             orientation: "h",
@@ -517,8 +541,8 @@ export default {
           margin: {
             r: 20,
             l: 20,
-            b: 0,
-            t: 40,
+            b: 20,
+            t: 20,
             pad: 10
           }
         };
@@ -553,7 +577,7 @@ export default {
         ];
 
         var layout = {
-          height: 350,
+          height: 360,
 
           legend: {
             orientation: "h",
@@ -656,11 +680,11 @@ export default {
     plotLiveProduction() {
       this.thuPV = this.getUnique(this.thuPV, "time");
       this.exameshWPP = this.getUnique(this.exameshWPP, "time");
-      if (this.thuPV.length > 10) {
-        this.thuPV = this.thuPV.slice(-10);
+      if (this.thuPV.length > 100) {
+        this.thuPV = this.thuPV.slice(-100);
       }
-      if (this.exameshWPP.length > 10) {
-        this.exameshWPP = this.exameshWPP.slice(-10);
+      if (this.exameshWPP.length > 100) {
+        this.exameshWPP = this.exameshWPP.slice(-100);
       }
       // temp arrays to hold time and energy values
       let thuTime = [];
@@ -721,6 +745,7 @@ export default {
           linewidth: 0.5,
           tick0: 0,
           zeroline: false,
+          type: "log",
           titlefont: {
             color: "black"
           },
@@ -733,8 +758,8 @@ export default {
           x: 0.5
         },
         margin: {
-          r: 50,
-          l: 70,
+          r: 20,
+          l: 90,
           b: 50,
           t: 20,
           pad: 10
@@ -744,9 +769,9 @@ export default {
     }
   },
   watch: {
-    totalConsumption() {
+    consumptionPower() {
       this.plotPercentage();
-      this.plotPercentage2();
+      //this.plotPercentage2();
     }
   },
 
@@ -777,6 +802,20 @@ export default {
   background-color: #f1eded;
 }
 
+.top-header {
+  padding: 1rem;
+  background-color: #154360;
+}
+
+img {
+  width: 100px;
+  height: 100px;
+}
+
+td {
+  font-size: 0.8rem;
+}
+
 .stats {
   display: flex;
   flex-wrap: wrap;
@@ -784,11 +823,24 @@ export default {
   margin: 0.5rem 4.5rem;
 }
 
-h4 {
+.top-heading {
+  font-size: 1.2rem;
+}
+
+.value-span {
   font-size: calc(1vw + 1vh + 1vmin);
   margin-bottom: 0.7rem;
   margin-top: 0.7rem;
   color: #394f7c;
+  font-weight: bold;
+}
+.stat {
+  padding-bottom: 1rem;
+}
+
+.sub-span {
+  padding-left: 1rem;
+  font-weight: 600;
 }
 
 .prod-color {
@@ -837,13 +889,13 @@ h4 {
 }
 
 .thu-examesh {
-  width: 34%;
+  width: 50%;
   padding: 0.5rem;
-  min-height: 350px;
+  min-height: 360px;
 }
 
 .realTime-table {
-  width: 30%;
+  width: 40%;
   padding: 0.5rem;
 }
 
@@ -867,7 +919,7 @@ h4 {
 #production-plot,
 #plot {
   width: 100%;
-  height: 350px;
+  height: 360px;
 }
 
 .test-enter, .test2-enter /* .list-leave-active below version 2.1.8 */ {
@@ -888,13 +940,13 @@ h4 {
 
 .map {
   width: 35%;
-  height: 435px;
+  height: 445px;
 }
 
 .prod-cons {
   width: 35%;
   padding: 0.5rem;
-  min-height: 350px;
+  min-height: 360px;
 }
 
 #map {

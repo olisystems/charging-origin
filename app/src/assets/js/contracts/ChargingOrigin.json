@@ -6260,12 +6260,103 @@
         }
       },
       "links": {},
-      "address": "0xAa862ddAC09F6736A61E1124040Fd883A6533C19",
-      "transactionHash": "0x21667bf3d915c0bfeef04805ad69c084c4e08ea0f24b08e567c966b85665c0bd"
+      "address": "0x383864fd16afa0Af2c5516E73753E4E07e1dE704",
+      "transactionHash": "0x3261f1138afb999689b085975d5c02b8f0822b26f7546486acb6f017d6dcb7cd"
+    },
+    "1576593900586": {
+      "events": {
+        "0x9115a28596ce1a0dab842933229083017e74850d31e0ebf8c13137151f85b91d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "consumer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "consumption",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "location",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "Consumption",
+          "type": "event",
+          "signature": "0x9115a28596ce1a0dab842933229083017e74850d31e0ebf8c13137151f85b91d"
+        },
+        "0x3a01907507513d0c2c3fb6f71952c21d086ea616f1edf79b5e25372dbbd74249": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "producer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "name": "production",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "Production",
+          "type": "event",
+          "signature": "0x3a01907507513d0c2c3fb6f71952c21d086ea616f1edf79b5e25372dbbd74249"
+        },
+        "0x5ec73e291cbb321963a3e86e88759691b12f1ef5c99121452a6dd1c793f9437c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "addressCP",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "name": "latitude",
+              "type": "uint32"
+            },
+            {
+              "indexed": false,
+              "name": "longitude",
+              "type": "uint32"
+            }
+          ],
+          "name": "ConsumerRegistration",
+          "type": "event",
+          "signature": "0x5ec73e291cbb321963a3e86e88759691b12f1ef5c99121452a6dd1c793f9437c"
+        }
+      },
+      "links": {},
+      "address": "0xD9f112f426F7CdE8BF425388C41EAD3C1a429D13",
+      "transactionHash": "0x3d654bdf2113eeb4dbe30ce078c7e28e975128f6874c200d06b087c0b377bdc5"
     }
   },
   "schemaVersion": "3.0.16",
-  "updatedAt": "2019-12-10T13:18:21.013Z",
+  "updatedAt": "2019-12-17T14:53:00.617Z",
   "devdoc": {
     "methods": {}
   },
