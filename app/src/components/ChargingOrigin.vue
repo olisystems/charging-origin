@@ -7,24 +7,25 @@
       </div>
       <div class="stats">
         <div class="stat">
-          <p>THU PV</p>
-          <h4>{{totalTHU}}</h4>
-          <p class="sub-heading">Total Production [kWh]</p>
+          <p class="top-heading">THU PV</p>
+          <span class="value-span">{{totalTHU}}</span>
+          <span></span>
+          <span class="sub-span">MWh</span>
         </div>
         <div class="stat">
-          <p>Examesh WPP</p>
-          <h4>{{totalExamesh}}</h4>
-          <p class="sub-heading">Total Production [MWh]</p>
+          <p class="top-heading">Examesh WPP</p>
+          <span class="value-span">{{totalExamesh}}</span>
+          <span class="sub-span">MWh</span>
         </div>
         <div class="stat">
-          <p>Total Production</p>
-          <h4 class="prod-color">{{totalProduction}}</h4>
-          <p class="sub-heading">[MWh]</p>
+          <p class="top-heading">Total Production</p>
+          <span class="prod-color value-span">{{totalProduction}}</span>
+          <span class="sub-span">MWh</span>
         </div>
         <div class="stat">
-          <p>Total Consumption</p>
-          <h4 class="cons-color">{{totalConsumption}}</h4>
-          <p class="sub-heading">[kWh]</p>
+          <p class="top-heading">Total Consumption</p>
+          <span class="cons-color value-span">{{totalConsumption}}</span>
+          <span class="sub-span">MWh</span>
         </div>
       </div>
     </div>
@@ -33,14 +34,14 @@
       <div class="percentage-wrapper">
         <div class="wrapper consumption-table">
           <div class="header">
-            <h3>Real Time Energy Consumption</h3>
+            <h3>Charging Stations Overview</h3>
           </div>
           <div class="table">
             <div class="table-wrapper">
               <v-table :data="consumptionEvents">
                 <thead slot="head">
                   <th>ETH Address</th>
-                  <th>Power</th>
+                  <th>Power [kW]</th>
                   <th>Location</th>
                   <th>Time</th>
                 </thead>
@@ -53,7 +54,7 @@
                       class="consumer-address"
                     >{{row.consumer}}</td>
 
-                    <td>{{row.power[row.power.length-1]}}</td>
+                    <td>{{row.power[row.power.length-1]/1000}}</td>
 
                     <td v-tooltip="row.location">{{row.location}}</td>
                     <td v-tooltip="row.time[row.time.length-1]">{{row.time[row.time.length-1]}}</td>
@@ -71,7 +72,7 @@
 
         <div class="pie-chart wrapper">
           <div class="header">
-            <h3>THU PV & Examesh WPP Energy Percentage</h3>
+            <h3>Charging Power Origin</h3>
           </div>
           <div id="percentage-plot"></div>
         </div>
@@ -82,7 +83,7 @@
       <div class="live-data-wrapper">
         <div class="wrapper realTime-table">
           <div class="header">
-            <h3>Real Time Energy Production</h3>
+            <h3>Generation Assets Overview</h3>
           </div>
           <div class="table">
             <div class="table-wrapper">
@@ -90,7 +91,7 @@
                 <thead slot="head">
                   <th>ETH Address</th>
                   <th>Name</th>
-                  <th>Power</th>
+                  <th>Power [kW]</th>
                   <th>Time</th>
                 </thead>
 
@@ -98,7 +99,7 @@
                   <tr v-for="(row, index) in displayData" :key="index">
                     <td v-tooltip="row.producer">{{row.producer}}</td>
                     <td>{{row.name}}</td>
-                    <td>{{row.power[row.power.length-1]}}</td>
+                    <td>{{row.power[row.power.length-1]/1000}}</td>
                     <td v-tooltip="row.time[row.time.length-1]">{{row.time[row.time.length-1]}}</td>
                   </tr>
                 </transition-group>
@@ -110,7 +111,7 @@
 
         <div class="thu-examesh wrapper">
           <div class="header">
-            <h3>THU PV & Examesh WPP Energy Production</h3>
+            <h3>Generation Assets Plot</h3>
           </div>
           <div id="production-plot">
             <h5 class="loader">Loading...</h5>
